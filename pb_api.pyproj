@@ -32,56 +32,27 @@
   <ItemGroup>
     <Compile Include="runserver.py" />
     <Compile Include="pb_api\__init__.py" />
-    <Compile Include="pb_api\views.py" />
+    <Compile Include="pb_api\api_endpoints.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="pb_api\" />
     <Folder Include="pb_api\static\" />
-    <Folder Include="pb_api\static\content\" />
-    <Folder Include="pb_api\static\fonts\" />
-    <Folder Include="pb_api\static\scripts\" />
     <Folder Include="pb_api\templates\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE" />
     <Content Include="README.md" />
     <Content Include="requirements.txt" />
-    <Content Include="pb_api\static\content\bootstrap.css" />
-    <Content Include="pb_api\static\content\bootstrap.min.css" />
-    <Content Include="pb_api\static\content\site.css" />
-    <Content Include="pb_api\static\fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="pb_api\static\fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="pb_api\static\fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="pb_api\static\fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="pb_api\static\scripts\bootstrap.js" />
-    <Content Include="pb_api\static\scripts\bootstrap.min.js" />
-    <Content Include="pb_api\static\scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="pb_api\static\scripts\jquery-1.10.2.js" />
-    <Content Include="pb_api\static\scripts\jquery-1.10.2.min.js" />
-    <Content Include="pb_api\static\scripts\jquery-1.10.2.min.map" />
-    <Content Include="pb_api\static\scripts\jquery.validate-vsdoc.js" />
-    <Content Include="pb_api\static\scripts\jquery.validate.js" />
-    <Content Include="pb_api\static\scripts\jquery.validate.min.js" />
-    <Content Include="pb_api\static\scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="pb_api\static\scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="pb_api\static\scripts\modernizr-2.6.2.js" />
-    <Content Include="pb_api\static\scripts\respond.js" />
-    <Content Include="pb_api\static\scripts\respond.min.js" />
-    <Content Include="pb_api\static\scripts\_references.js" />
-    <Content Include="pb_api\templates\about.html" />
-    <Content Include="pb_api\templates\contact.html" />
-    <Content Include="pb_api\templates\index.html" />
-    <Content Include="pb_api\templates\layout.html" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env_pb_api\">
       <Id>env_pb_api</Id>
       <Version>3.7</Version>
-      <Description>env_pb_api (Python 3.7 (32-bit))</Description>
+      <Description>env_pb_api (Python 3.7 (64-bit))</Description>
       <InterpreterPath>Scripts\python.exe</InterpreterPath>
       <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
-      <Architecture>X86</Architecture>
+      <Architecture>X64</Architecture>
     </Interpreter>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />

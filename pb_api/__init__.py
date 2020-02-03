@@ -5,4 +5,4 @@ The flask application package.
 from flask import Flask
 app = Flask(__name__)
 
-import pb_api.views
+import pb_api.api_endpoints

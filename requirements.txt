@@ -11,3 +11,5 @@ pyOpenSSL==19.1.0
 setuptools==41.2.0
 six==1.14.0
 Werkzeug==0.16.1
+Flask-MySQL==1.5.1
+PyMySQL==0.9.3
