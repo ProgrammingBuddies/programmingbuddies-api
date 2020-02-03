@@ -43,6 +43,8 @@
     <Folder Include="pb_api\templates\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="LICENSE" />
+    <Content Include="README.md" />
     <Content Include="requirements.txt" />
     <Content Include="pb_api\static\content\bootstrap.css" />
     <Content Include="pb_api\static\content\bootstrap.min.css" />
