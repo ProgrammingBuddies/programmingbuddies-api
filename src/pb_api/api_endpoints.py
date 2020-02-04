@@ -20,6 +20,7 @@ def version():
         "python_version": "{}.{}".format(version_info.major, version_info.minor)
     })
 
+
 @app.route('/users')
 def users():
     return jsonify({
