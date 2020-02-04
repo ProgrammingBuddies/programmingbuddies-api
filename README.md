@@ -1,9 +1,10 @@
 # Programming Buddies API
 API backend for Programming Buddies (projects management)
 
-## Tech stack:
-- Python 3
-- Flask
+## Tech Stack
+- Python 3.7
+- Flask 0.12.4
+- MySql 1.5.1
 
 ## Milestones
 - [ ] build DB and endpoints with basic CRUD
