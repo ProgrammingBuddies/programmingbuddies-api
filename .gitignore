@@ -341,3 +341,4 @@ healthchecksdb
 /env_pb_api
 *.pyproj
 *.sln
+/env_api

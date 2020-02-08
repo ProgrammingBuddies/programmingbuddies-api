@@ -5,7 +5,7 @@ Routes and views for the flask application.
 import pkg_resources
 from sys import version_info
 from flask import jsonify
-from pb_api import app
+from api import app
 
 @app.route('/', methods=['GET'])
 @app.route('/version', methods=['GET'])
