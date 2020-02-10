@@ -1,4 +1,4 @@
-Flask==0.12.4
+Flask==1.0
 cffi==1.13.2
 Click==7.0
 cryptography==2.8
