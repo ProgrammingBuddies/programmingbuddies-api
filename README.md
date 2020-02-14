@@ -7,6 +7,7 @@ API backend for Programming Buddies (projects management)
 - MySql 1.5.1
 - pyOpenSSL 19.1.0
 
+
 ## Milestones
 - [ ] build DB and endpoints with basic CRUD
 - [ ] add security for app (ie - bots, and non-human actors/clients)
