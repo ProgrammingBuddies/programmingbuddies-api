@@ -3,10 +3,10 @@ API backend for Programming Buddies (projects management)
 
 ## Tech Stack
 - Python 3.7
-- Flask 1.0
+- Flask 1.1.1
 - MySql 1.5.1
+- pyOpenSSL 19.1.0
 
-for more see [requirements.txt](src/requirements.txt)
 
 ## Milestones
 - [ ] build DB and endpoints with basic CRUD
