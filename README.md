@@ -10,7 +10,7 @@ API backend for Programming Buddies (projects management)
 ## Set up guide
 - make sure you have `pipenv` installed
 - `git clone https://github.com/ProgrammingBuddies/programmingbuddies-api.git`
-- `cd programmingbudies-api`
+- `cd programmingbuddies-api`
 - `pipenv run python src/runserver.py`
 
 ## Milestones
