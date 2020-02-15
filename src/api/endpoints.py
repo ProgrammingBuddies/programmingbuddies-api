@@ -3,9 +3,16 @@ Routes and views for the flask application.
 """
 
 import pkg_resources
+import os
+from flask import send_from_directory
 from sys import version_info
 from flask import jsonify
 from api import app
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/', methods=['GET'])
 @app.route('/version', methods=['GET'])
