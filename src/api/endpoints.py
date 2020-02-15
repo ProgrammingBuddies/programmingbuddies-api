@@ -19,9 +19,19 @@ def favicon():
 def version():
     return jsonify({
         "pip_version": "{}".format(pkg_resources.get_distribution('pip').version),
-        "openSSL_version": "{}".format(pkg_resources.get_distribution('pyopenssl').version),
-        "jinja_version": "{}".format(pkg_resources.get_distribution('jinja2').version),
-        "mySql_version": "{}".format(pkg_resources.get_distribution('flask-mysql').version),
+        "pyopenssl_version": "{}".format(pkg_resources.get_distribution('pyopenssl').version),
+        "jinja2_version": "{}".format(pkg_resources.get_distribution('jinja2').version),
+        "flask-mysql_version": "{}".format(pkg_resources.get_distribution('flask-mysql').version),
         "flask_version": "{}".format(pkg_resources.get_distribution('flask').version),
+        "cffi_version": "{}".format(pkg_resources.get_distribution('cffi').version),	
+        "click_version": "{}".format(pkg_resources.get_distribution('click').version),
+        "cryptography_version": "{}".format(pkg_resources.get_distribution('cryptography').version),
+        "itsdangerous_version": "{}".format(pkg_resources.get_distribution('itsdangerous').version),
+        "jsonify_version": "{}".format(pkg_resources.get_distribution('jsonify').version),
+        "markupsafe_version": "{}".format(pkg_resources.get_distribution('markupsafe').version),
+        "pycparser_version": "{}".format(pkg_resources.get_distribution('pycparser').version),
+        "pymysql_version": "{}".format(pkg_resources.get_distribution('pymysql').version),
+        "six_version": "{}".format(pkg_resources.get_distribution('six').version),
+        "werkzeug_version": "{}".format(pkg_resources.get_distribution('werkzeug').version),
         "python_version": "{}.{}".format(version_info.major, version_info.minor)
     })
