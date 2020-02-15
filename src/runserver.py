@@ -1,5 +1,5 @@
 """
-This script runs the pb_api application using a development server.
+This script runs the api application using a development server.
 """
 
 from os import environ
