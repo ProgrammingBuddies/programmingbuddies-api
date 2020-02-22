@@ -8,3 +8,4 @@ app = Flask(__name__)
 from api.models import db
 import api.models
 import api.endpoints
+import api.views
