@@ -342,3 +342,4 @@ healthchecksdb
 *.pyproj
 *.sln
 /env_api
+*.env

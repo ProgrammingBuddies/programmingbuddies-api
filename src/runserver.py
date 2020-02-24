@@ -11,4 +11,4 @@ if __name__ == '__main__':
         PORT = int(environ.get('SERVER_PORT', '5001'))
     except ValueError:
         PORT = 5001
-    app.run(HOST, PORT, ssl_context='adhoc')
+    app.run(HOST, PORT)

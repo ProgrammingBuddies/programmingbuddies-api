@@ -9,6 +9,9 @@ verify_ssl = true
 flask-mysql = "*"
 jsonify = "*"
 pyopenssl = "*"
+flask-sqlalchemy = "*"
+flask = "*"
+sqlalchemy-utils = "*"
 
 [requires]
 python_version = "3.7"
