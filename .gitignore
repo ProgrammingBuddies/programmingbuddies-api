@@ -344,5 +344,10 @@ healthchecksdb
 /env_api
 *.env
 
+<<<<<<< HEAD
 # vscode
+=======
+
+# Visual Studio Code
+>>>>>>> Added .vscode/ to .gitignore.
 .vscode/
