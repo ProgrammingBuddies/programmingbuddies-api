@@ -343,3 +343,6 @@ healthchecksdb
 *.sln
 /env_api
 *.env
+
+# vscode
+.vscode/
