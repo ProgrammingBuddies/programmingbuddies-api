@@ -10,7 +10,7 @@ def init_db(reset=False):
     flag = database_exists(db_url)
     if not flag:
         create_database(db_url)
-    if flag or reset:
+    if reset:
         db.drop_all()
         db.create_all()
         db.session.commit()
