@@ -9,7 +9,11 @@ projects = db.Table('user_has_project',
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
+    bio = db.Column(db.Text)
     experience_level = db.Column(db.Integer)
+    interests = db.Column(db.Text)
+    location = db.Column(db.String(80))
+    occupation = db.Column(db.String(80))
     projects = db.relationship('Project', secondary=projects, backref=db.backref('members', lazy='dynamic'))
     links = db.relationship('UserLink', backref='user', lazy=True)
 
@@ -23,4 +27,4 @@ class UserLink(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return '<User %r>' % self.name
+        return '<UserLink %r>' % self.name
