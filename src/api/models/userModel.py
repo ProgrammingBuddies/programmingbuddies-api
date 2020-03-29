@@ -1,5 +1,4 @@
 from api.models import db
-from api.models.projectModel import Project
 
 projects = db.Table('user_has_project',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
@@ -10,7 +9,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     bio = db.Column(db.Text)
-    experience_level = db.Column(db.Integer)
+    languages = db.Column(db.Text)
     interests = db.Column(db.Text)
     location = db.Column(db.String(80))
     occupation = db.Column(db.String(80))
