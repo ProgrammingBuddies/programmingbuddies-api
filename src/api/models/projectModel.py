@@ -4,6 +4,7 @@ class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.Text)
+    languages = db.Column(db.Text)
     development_status = db.Column(db.Integer)
     creation_date = db.Column(db.DateTime)
     release_date = db.Column(db.DateTime)
