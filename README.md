@@ -15,6 +15,7 @@ API backend for Programming Buddies (projects management)
 - `pipenv install`
 - - if you have multiple Python versions installed you might need to specify which one to use `pipenv install --python=python3.7`
 - create a file `.env`
+- - `.env` in this case is the full filename and not just the extension. `app.env` for example would not be loaded automatically by pipenv
 - - add line `FLASK_ENV=development` to have the server automatically restart on file changes
 - - add line `CONNECT=mysql+pymysql://<user>:<password>@localhost:3306/<database name>` to specify connection parameters
 - `pipenv run python src/runserver.py`
