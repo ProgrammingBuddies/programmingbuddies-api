@@ -1,9 +1,11 @@
 from api.models import db
 
-projects = db.Table('user_has_project',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('project_id', db.Integer, db.ForeignKey('project.id'), primary_key=True)
-)
+class UserHasProject(db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
+    user = db.relationship('User', back_populates='projects')
+    project = db.relationship('Project', back_populates='users')
+    role = db.Column(db.Integer, nullable=False)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -13,7 +15,7 @@ class User(db.Model):
     interests = db.Column(db.Text)
     location = db.Column(db.String(80))
     occupation = db.Column(db.String(80))
-    projects = db.relationship('Project', secondary=projects, backref=db.backref('members', lazy='dynamic'))
+    projects = db.relationship('UserHasProject', back_populates='user')
     links = db.relationship('UserLink', backref='user', lazy=True)
 
     def __repr__(self):

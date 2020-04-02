@@ -8,6 +8,7 @@ class Project(db.Model):
     development_status = db.Column(db.Integer, nullable=False)
     creation_date = db.Column(db.DateTime, nullable=False)
     release_date = db.Column(db.DateTime)
+    users = db.relationship('UserHasProject', back_populates='project')
     links = db.relationship('ProjectLink', backref='project', lazy=True)
 
     def __repr__(self):

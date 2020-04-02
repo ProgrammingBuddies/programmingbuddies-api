@@ -4,8 +4,8 @@ The database package
 from sys import argv
 from datetime import datetime
 from api.models.database import db, init_db
-from api.models.userModel import User
-from api.models.projectModel import Project
+from api.models.userModel import UserHasProject, User, UserLink
+from api.models.projectModel import Project, ProjectLink
 
 if '--reset-db' in argv:
     init_db(True)
@@ -14,24 +14,20 @@ else:
 
 """
 # Test data
-from api.models.userModel import UserLink
-from api.models.projectModel import ProjectLink
+import datetime;
 
-user1 = User()
-user1.name = 'Foe Joe'
-
-link1 = UserLink()
-link1.name = 'GitHub'
+user1 = User(name='Foe Joe')
+link1 = UserLink(name='GitHub', url='https://github.com')
 user1.links.append(link1)
 
-project1 = Project()
-project1.name = 'Hello, World!'
-
-link2 = ProjectLink()
-link2.name = 'Discord'
+project1 = Project(name='Hello, World!', description='First project.', development_status=2, creation_date=datetime.datetime.now())
+link2 = ProjectLink(name='Reddit', url='https://reddit.com')
 project1.links.append(link2)
 
-user1.projects.append(project1)
+userHasProject = UserHasProject(role=1)
+userHasProject.project = project1
+
+user1.projects.append(userHasProject)
 
 db.session.add(user1)
 db.session.commit()
