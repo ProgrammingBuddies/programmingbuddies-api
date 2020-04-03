@@ -12,6 +12,7 @@ pyopenssl = "*"
 flask-sqlalchemy = "*"
 flask = "*"
 sqlalchemy-utils = "*"
+requests-oauthlib = "*"
 
 [requires]
 python_version = "3.7"
