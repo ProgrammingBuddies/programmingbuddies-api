@@ -1,3 +1,4 @@
+from api import ma
 from api.models import db
 
 class UserHasProject(db.Model):
@@ -20,6 +21,10 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.name
+    
+class UserSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'name')
 
 class UserLink(db.Model):
     id = db.Column(db.Integer, primary_key=True)

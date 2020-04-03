@@ -10,5 +10,9 @@ class UserController:
     def get_user(self, **kwargs):
         user = User.query.filter_by(**kwargs).first()
         return user
+    
+    def get_all_users(self, **kwargs):
+        all_users = User.query.all()
+        return all_users
 
 userController = UserController()
