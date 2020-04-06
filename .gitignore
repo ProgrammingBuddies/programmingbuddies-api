@@ -344,5 +344,6 @@ healthchecksdb
 /env_api
 *.env
 
-# vscode
+
+# Visual Studio Code
 .vscode/
