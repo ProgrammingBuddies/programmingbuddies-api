@@ -1,4 +1,4 @@
-from api.models import db, User
+from api.models import db, User, UserHasProject, UserLink
 
 class UserController:
     session = db.session()
@@ -20,8 +20,22 @@ class UserController:
         return all_users
 
     def delete_user(self, id):
-        result = User.query.filter_by(id=id).delete()
+        # Remove all user's links
+        for link in UserLink.query.filter_by(user_id=id).all():
+            db.session.delete(link)
+        
+        # Remove user from all projects
+        for project in UserHasProject.query.filter_by(user_id=id).all():
+            db.session.delete(project)
+        
+        user = User.query.filter_by(id=id).first()
+        
+        if user == None:
+            return user
+        
+        db.session.delete(user)
         db.session.commit()
-        return result
+        
+        return user
 
 userController = UserController()
