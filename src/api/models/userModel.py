@@ -1,4 +1,3 @@
-from api import ma
 from api.models import db
 
 class UserHasProject(db.Model):
@@ -7,6 +6,14 @@ class UserHasProject(db.Model):
     user = db.relationship('User', back_populates='projects')
     project = db.relationship('Project', back_populates='users')
     role = db.Column(db.Integer, nullable=False)
+
+    # todo: figure out where to put the role property
+
+    def user_as_dict(self):
+        return self.user.as_dict()
+
+    def project_as_dict(self):
+        return self.project.as_dict()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,18 +26,37 @@ class User(db.Model):
     projects = db.relationship('UserHasProject', back_populates='user')
     links = db.relationship('UserLink', backref='user', lazy=True)
 
+    def as_dict(self):
+        obj_d = {
+            'id': self.id,
+            'name': self.name,
+            'bio': self.bio,
+            'languages': self.languages,
+            'interests': self.interests,
+            'location': self.location,
+            'occupation': self.occupation,
+            'projects': [ project.project_as_dict() for project in self.projects ],
+            'links': [ link.as_dict() for link in self.links ]
+        }
+        return obj_d
+
     def __repr__(self):
         return '<User %r>' % self.name
-    
-class UserSchema(ma.Schema):
-    class Meta:
-        fields = ('id', 'name')
 
 class UserLink(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     url = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def as_dict(self):
+        obj_d = {
+            'id': self.id,
+            'name': self.name,
+            'url': self.url,
+            'user_id': self.user_id
+        }
+        return obj_d
 
     def __repr__(self):
         return '<UserLink %r>' % self.name
