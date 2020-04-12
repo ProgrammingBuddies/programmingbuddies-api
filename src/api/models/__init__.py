@@ -3,9 +3,14 @@ The database package
 """
 from sys import argv
 from datetime import datetime
+
 from api.models.database import db, init_db
-from api.models.userModel import UserHasProject, User, UserLink
-from api.models.projectModel import Project, ProjectLink
+
+from api.models.userModel import User
+from api.models.userLinkModel import UserLink
+from api.models.projectModel import Project
+from api.models.projectLinkModel import ProjectLink
+from api.models.userHasProjectModel import UserHasProject
 
 if '--reset-db' in argv:
     init_db(True)
