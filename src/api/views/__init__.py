@@ -1,4 +1,4 @@
 """
 The views package
 """
-from api.views import userView
+from api.views import userView, projectView
