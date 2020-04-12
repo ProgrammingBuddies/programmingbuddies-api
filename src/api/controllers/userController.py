@@ -8,6 +8,19 @@ class UserController:
         self.session.commit()
 
         return user
+    
+    def update_user(self, id, **kwargs):
+        user = User.query.filter_by(id=id).first()
+
+        if user == None:
+            return user
+
+        for key, value in kwargs.items():
+            setattr(user, key, value)
+
+        db.session.commit()
+
+        return user
 
     def get_user(self, **kwargs):
         user = User.query.filter_by(**kwargs).first()
