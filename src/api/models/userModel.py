@@ -10,10 +10,10 @@ class UserHasProject(db.Model):
     # todo: figure out where to put the role property
 
     def user_as_dict(self):
-        return self.user.as_dict()
+        return { 'user_id': self.user_id, 'role': self.role }
 
     def project_as_dict(self):
-        return self.project.as_dict()
+        return { 'project_id': self.project_id, 'role': self.role }
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
