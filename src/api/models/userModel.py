@@ -1,19 +1,7 @@
 from api.models import db
 
-class UserHasProject(db.Model):
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
-    user = db.relationship('User', back_populates='projects')
-    project = db.relationship('Project', back_populates='users')
-    role = db.Column(db.Integer, nullable=False)
-
-    # todo: figure out where to put the role property
-
-    def user_as_dict(self):
-        return { 'user_id': self.user_id, 'role': self.role }
-
-    def project_as_dict(self):
-        return { 'project_id': self.project_id, 'role': self.role }
+from api.models.userHasProjectModel import UserHasProject
+from api.models.userLinkModel import UserLink
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -42,21 +30,3 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.name
-
-class UserLink(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    url = db.Column(db.Text, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
-    def as_dict(self):
-        obj_d = {
-            'id': self.id,
-            'name': self.name,
-            'url': self.url,
-            'user_id': self.user_id
-        }
-        return obj_d
-
-    def __repr__(self):
-        return '<UserLink %r>' % self.name
