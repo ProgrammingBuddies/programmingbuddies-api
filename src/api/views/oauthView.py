@@ -38,7 +38,7 @@ def profile():
     username = user['login']
     email = user['email']
 
-    if(userController.get_user(username=username) = None):
+    if(userController.get_user(username=username) == None):
         if(email != None):
             userController.create_user(username=username, email=email)
 """
