@@ -3,7 +3,9 @@ from api.models import db
 from api.models.userHasProjectModel import UserHasProject
 from api.models.userLinkModel import UserLink
 
-class User(db.Model):
+from flask_login import UserMixin
+
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     bio = db.Column(db.Text)
