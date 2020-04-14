@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from flask_login import login_user, login_required, logout_user, current_user
 from api import app
 from api.controllers import userController
 
@@ -9,6 +10,7 @@ def create_user():
     return jsonify(user.as_dict()), 201
 
 @app.route("/users/<id>", methods=['POST'])
+@login_required
 def update_user(id):
     if 'id' in request.get_json():
         return "", 501
@@ -34,10 +36,29 @@ def get_all_users():
     return jsonify(users), 200
 
 @app.route("/users/<id>", methods=['DELETE'])
+@login_required
 def delete_user(id):
-    user = userController.delete_user(id)
+    if int(current_user.id) == int(id):
+        user = userController.delete_user(id)
 
-    if user:
-        return "", 200
+        if user:
+            return "", 200
+        else:
+            return "", 404
     else:
-        return "", 404
+        return "You cannot delete an other user", 401
+
+@app.route("/users/sign-in/<name>", methods=["POST"])
+def sign_in(name):
+    user = userController.get_user(name=name)
+    if user == None:
+        return "", 400
+    else:
+        login_user(user)
+        return str(user.id), 200
+
+@app.route("/users/sign-out")
+@login_required
+def sign_out():
+    logout_user()
+    return "", 200
