@@ -9,6 +9,19 @@ class ProjectController:
 
         return project
 
+    def update_project(self, id, **kwargs):
+        project = Project.query.filter_by(id=id).first()
+
+        if project == None:
+            return project
+
+        for key, value in kwargs.items():
+            setattr(project, key, value)
+
+        db.session.commit()
+
+        return project
+
     def get_project(self, **kwargs):
         project = Project.query.filter_by(**kwargs).first()
         

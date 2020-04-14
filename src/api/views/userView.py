@@ -3,10 +3,18 @@ from api import app
 from api.controllers import userController
 
 @app.route("/users", methods=['POST'])
-def post_user():
+def create_user():
     user = userController.create_user(**request.get_json())
 
     return jsonify(user.as_dict()), 201
+
+@app.route("/users/<id>", methods=['POST'])
+def update_user(id):
+    if 'id' in request.get_json():
+        return "", 501
+    user = userController.update_user(id, **request.get_json())
+
+    return jsonify(user.as_dict()), 200
 
 @app.route("/users/<id>", methods=['GET'])
 def get_user(id):
@@ -30,6 +38,6 @@ def delete_user(id):
     user = userController.delete_user(id)
 
     if user:
-        return "", 202
+        return "", 200
     else:
         return "", 404
