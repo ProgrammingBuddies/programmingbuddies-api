@@ -8,6 +8,14 @@ def post_project():
 
     return jsonify(project.as_dict()), 201
 
+@app.route("/projects/<id>", methods=['POST'])
+def update_project(id):
+    if 'id' in request.get_json():
+        return "", 501
+    project = projectController.update_project(id, **request.get_json())
+
+    return jsonify(project.as_dict()), 200
+
 @app.route("/projects/<id>", methods=['GET'])
 def get_project(id):
     project = projectController.get_project(id=id)
