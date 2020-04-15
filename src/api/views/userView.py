@@ -1,6 +1,7 @@
-from flask import request, jsonify
+from flask import request, jsonify, session
 from flask_login import login_user, login_required, logout_user, current_user
 from api import app
+from datetime import timedelta
 from api.controllers import userController
 
 @app.route("/users", methods=['POST'])
@@ -47,6 +48,11 @@ def delete_user(id):
             return "", 404
     else:
         return "You cannot delete an other user", 401
+
+@app.before_request
+def before_sign_in():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(seconds=20)
 
 @app.route("/users/sign-in/<name>", methods=["POST"])
 def sign_in(name):
