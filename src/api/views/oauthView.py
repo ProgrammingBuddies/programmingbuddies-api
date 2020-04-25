@@ -1,52 +1,21 @@
 from api import app 
-from requests_oauthlib import OAuth2Session
+from os import environ
 from flask import Flask, request, redirect, session, url_for
-from api.controllers import userController
+from flask_dance.contrib.github import make_github_blueprint, github
 
-client_id = ""
-client_secret = ""
-authorization_base_url = 'https://github.com/login/oauth/authorize'
-token_url = 'https://github.com/login/oauth/access_token'
+print("hello")
+app.secret_key = environ.get("APP_SECRET")
+github_blueprint = make_github_blueprint(
+    client_id = environ.get("GITHUB_ID"),
+    client_secret = environ.get("GITHUB_SECRET")
+)
 
+app.register_blueprint(github_blueprint, url_prefix="/login")
 
-@app.route("/auth")
-def auth():
-    github = OAuth2Session(client_id)
-    authorization_url, state = github.authorization_url(authorization_base_url)
-
-    # State is used to prevent CSRF, keep this for later.
-    session['oauth_state'] = state
-    return redirect(authorization_url)
-
-
-@app.route("/callback", methods=["GET"])
-def callback():
-    github = OAuth2Session(client_id, state=session['oauth_state'])
-    token = github.fetch_token(token_url, client_secret=client_secret, authorization_response=request.url)
-
-    # At this point you can fetch protected resources but lets save
-    # the token and show how this is done from a persisted token
-    # in /profile.
-    session['oauth_token'] = token
-
-    return redirect(url_for('.profile'))
-
-@app.route("/profile", methods=["GET"])
-def profile():
-    github = OAuth2Session(client_id, token=session['oauth_token'])
-    user = github.get('https://api.github.com/user').json()
-    username = user['login']
-    email = user['email']
-
-    if(userController.get_user(username=username) == None):
-        if(email != None):
-            userController.create_user(username=username, email=email)
-"""
-        else:
-            #---GITHUB ACCOUNT HAS NO PUBLIC EMAIL ADDRESS---
-    
-    else:
-        #---LOGIN PROCESS?---
-"""
-
-    
+@app.route("/")
+def index():
+    if not github.authorized:
+        return redirect(url_for("github.login"))
+    resp = github.get("/user")
+    assert resp.ok
+    return "You are @{login} on GitHub".format(login=resp.json()["login"])
