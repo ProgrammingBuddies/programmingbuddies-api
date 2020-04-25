@@ -12,10 +12,11 @@ github_blueprint = make_github_blueprint(
 
 app.register_blueprint(github_blueprint, url_prefix="/login")
 
-@app.route("/")
+@app.route("/login/")
 def index():
     if not github.authorized:
         return redirect(url_for("github.login"))
     resp = github.get("/user")
-    assert resp.ok
+    uid = resp.json()["id"]
+    print(uid)
     return "You are @{login} on GitHub".format(login=resp.json()["login"])
