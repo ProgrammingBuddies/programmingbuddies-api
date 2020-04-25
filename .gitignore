@@ -342,8 +342,9 @@ healthchecksdb
 *.pyproj
 *.sln
 /env_api
-*.env
+.env
 
 
 # Visual Studio Code
 .vscode/
+*.pem
