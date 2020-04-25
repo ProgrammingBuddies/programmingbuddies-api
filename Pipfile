@@ -6,14 +6,13 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-flask-mysql = "*"
 jsonify = "*"
-pyopenssl = "*"
 flask-sqlalchemy = "*"
 flask = "*"
 sqlalchemy-utils = "*"
-requests-oauthlib = "*"
-request-oauthlib = "*"
+mysql-connector-python = "*"
+flask-dance = "*"
+pyopenssl = "*"
 
 [requires]
 python_version = "3.7"
