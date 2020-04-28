@@ -17,6 +17,7 @@ class User(db.Model):
     occupation = db.Column(db.String(80))
     projects = db.relationship('UserHasProject', back_populates='user')
     links = db.relationship('UserLink', backref='user', lazy=True)
+    project_feedbacks = db.relationship('ProjectFeedback', backref='author')
 
     def __repr__(self):
         return '<User %r>' % self.name
@@ -29,3 +30,13 @@ class UserLink(db.Model):
 
     def __repr__(self):
         return '<UserLink %r>' % self.name
+
+class UserFeedback(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    rating = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.String(255), nullable=True)
+
+    author = db.relationship('User', foreign_keys=[author_id], backref='author')
+    user = db.relationship('User', foreign_keys=[user_id], backref='user')
