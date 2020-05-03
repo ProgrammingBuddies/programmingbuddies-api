@@ -3,9 +3,16 @@ The database package
 """
 from sys import argv
 from datetime import datetime
+
 from api.models.database import db, init_db
-from api.models.userModel import UserHasProject, User, UserLink, UserFeedback
-from api.models.projectModel import Project, ProjectLink, ProjectFeedback
+
+from api.models.userModel import User
+from api.models.userLinkModel import UserLink
+from api.models.projectModel import Project
+from api.models.projectLinkModel import ProjectLink
+from api.models.userHasProjectModel import UserHasProject
+from api.models.userFeedbackModel import UserFeedback
+from api.models.projectFeedbackModel import ProjectFeedback
 
 if '--reset-db' in argv:
     init_db(True)
@@ -34,8 +41,8 @@ user1.projects.append(userHasProject)
 feedback1 = ProjectFeedback(rating=3, description="Cool project!", author=user1)
 feedback2 = ProjectFeedback(rating=1, description="Not so cool!", author=user2)
 
-project1.feedbacks.append(feedback1)
-project1.feedbacks.append(feedback2)
+# project1.feedbacks.append(feedback1)
+# project1.feedbacks.append(feedback2)
 
 feedback3 = UserFeedback(author=user1, user=user2, rating=5, description="Good guy!")
 feedback4 = UserFeedback(author=user3, user=user2, rating=1, description="Poor guy!")
