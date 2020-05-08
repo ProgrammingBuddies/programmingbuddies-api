@@ -12,5 +12,7 @@ if __name__ == '__main__':
         PORT = int(environ.get('SERVER_PORT', '5001'))
     except ValueError:
         PORT = 5001
-    app.config["SECRET_KEY"] = token_urlsafe(16)
-    app.run(HOST, PORT)
+    if environ.get('FLASK_ENV', 'production') == 'development':
+        app.run(HOST, PORT, ssl_context=('cert.pem', 'key.pem'))
+    else:
+        app.run(HOST, PORT)
