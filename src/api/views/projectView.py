@@ -13,6 +13,9 @@ def post_project():
 
 @app.route("/projects/<id>", methods=['POST'])
 def update_project(id):
+    if 'id' in request.get_json():
+        return "Failed to update project. Can not update user id.", 400
+
     project = projectController.update_project(id, **request.get_json())
 
     if project == None:

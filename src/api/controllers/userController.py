@@ -19,9 +19,7 @@ class UserController:
             return None
 
         for key, value in kwargs.items():
-            if key == 'id':
-                return None
-            elif not hasattr(user, key):
+            if not hasattr(user, key):
                 return None
 
         for key, value in kwargs.items():

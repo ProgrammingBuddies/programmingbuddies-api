@@ -13,6 +13,9 @@ def create_user():
 
 @app.route("/users/<id>", methods=['POST'])
 def update_user(id):
+    if 'id' in request.get_json():
+        return "Failed to update user. Can not update user id.", 400
+
     user = userController.update_user(id, **request.get_json())
 
     if user == None:
