@@ -6,15 +6,19 @@ from api.controllers import projectController
 def post_project():
     project = projectController.create_project(**request.get_json())
 
-    return jsonify(project.as_dict()), 201
+    if project == None:
+        return "Failed to create project.", 400
+    else:
+        return jsonify(project.as_dict()), 201
 
 @app.route("/projects/<id>", methods=['POST'])
 def update_project(id):
-    if 'id' in request.get_json():
-        return "", 501
     project = projectController.update_project(id, **request.get_json())
 
-    return jsonify(project.as_dict()), 200
+    if project == None:
+        return "Failed to update project.", 400
+    else:
+        return jsonify(project.as_dict()), 200
 
 @app.route("/projects/<id>", methods=['GET'])
 def get_project(id):

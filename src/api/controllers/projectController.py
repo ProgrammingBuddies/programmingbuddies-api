@@ -3,17 +3,26 @@ from api.models import db, Project, UserHasProject, ProjectLink
 class ProjectController:
     session = db.session()
     def create_project(self, **kwargs):
-        project = Project(**kwargs)
-        self.session.add(project)
-        self.session.commit()
+        try:
+            project = Project(**kwargs)
+            self.session.add(project)
+            self.session.commit()
 
-        return project
+            return project
+        except:
+            return None
 
     def update_project(self, id, **kwargs):
         project = Project.query.filter_by(id=id).first()
 
         if project == None:
-            return project
+            return None
+        
+        for key, value in kwargs.items():
+            if key == 'id':
+                return None
+            elif not hasattr(project, key):
+                return None
 
         for key, value in kwargs.items():
             setattr(project, key, value)
