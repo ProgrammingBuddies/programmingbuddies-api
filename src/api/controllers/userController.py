@@ -3,17 +3,26 @@ from api.models import db, User, UserHasProject, UserLink
 class UserController:
     session = db.session()
     def create_user(self, **kwargs):
-        user = User(**kwargs)
-        self.session.add(user)
-        self.session.commit()
+        try:
+            user = User(**kwargs)
+            self.session.add(user)
+            self.session.commit()
 
-        return user
+            return user
+        except:
+            return None
     
     def update_user(self, id, **kwargs):
         user = User.query.filter_by(id=id).first()
 
         if user == None:
-            return user
+            return None
+
+        for key, value in kwargs.items():
+            if key == 'id':
+                return None
+            elif not hasattr(user, key):
+                return None
 
         for key, value in kwargs.items():
             setattr(user, key, value)

@@ -6,15 +6,19 @@ from api.controllers import userController
 def create_user():
     user = userController.create_user(**request.get_json())
 
-    return jsonify(user.as_dict()), 201
+    if user == None:
+        return "Failed to create user.", 400
+    else:
+        return jsonify(user.as_dict()), 201
 
 @app.route("/users/<id>", methods=['POST'])
 def update_user(id):
-    if 'id' in request.get_json():
-        return "", 501
     user = userController.update_user(id, **request.get_json())
 
-    return jsonify(user.as_dict()), 200
+    if user == None:
+        return "Failed to update user.", 400
+    else:
+        return jsonify(user.as_dict()), 200
 
 @app.route("/users/<id>", methods=['GET'])
 def get_user(id):
