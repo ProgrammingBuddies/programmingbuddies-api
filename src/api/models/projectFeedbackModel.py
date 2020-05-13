@@ -1,6 +1,4 @@
 from api.models import db
-# from api.models.projectModel import Project
-# from api.models.userModel import User
 
 class ProjectFeedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)

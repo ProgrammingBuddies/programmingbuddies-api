@@ -14,7 +14,9 @@ class User(db.Model):
     occupation = db.Column(db.String(80))
     projects = db.relationship('UserHasProject', back_populates='user')
     links = db.relationship('UserLink', backref='user', lazy=True)
-    project_feedbacks = db.relationship('ProjectFeedback', backref='author')
+    project_feedbacks = db.relationship('ProjectFeedback', backref='project_feed_author')
+    user_feedbacks = db.relationship('UserFeedback', foreign_keys="UserFeedback.author_id", backref='user_feed_author')
+    received_feebacks = db.relationship('UserFeedback', foreign_keys="UserFeedback.user_id", backref='destination')
 
     def as_dict(self):
         obj_d = {

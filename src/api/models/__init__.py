@@ -38,22 +38,17 @@ userHasProject.project = project1
 
 user1.projects.append(userHasProject)
 
-feedback1 = ProjectFeedback(rating=3, description="Cool project!", author=user1)
-feedback2 = ProjectFeedback(rating=1, description="Not so cool!", author=user2)
+feedback1 = ProjectFeedback(rating=3, description="Cool project!", project_feed_author=user1, project=project1)
+feedback2 = ProjectFeedback(rating=1, description="Not so cool!",  project_feed_author=user2, project=project1)
 
 # project1.feedbacks.append(feedback1)
 # project1.feedbacks.append(feedback2)
 
-feedback3 = UserFeedback(author=user1, user=user2, rating=5, description="Good guy!")
-feedback4 = UserFeedback(author=user3, user=user2, rating=1, description="Poor guy!")
+feedback3 = UserFeedback(user_feed_author=user1, destination=user2, rating=5, description="Good guy!")
+feedback4 = UserFeedback(user_feed_author=user3, destination=user2, rating=1, description="Poor guy!")
 
 db.session.add(user1)
 db.session.add(user2)
 db.session.add(user3)
 db.session.commit()
-
-users = User.query.all()
-print(users[0].author, users[0].user, users[0].project_feedbacks)
-print(users[1].author, users[1].user, users[1].project_feedbacks)
-print(users[2].author, users[2].user, users[2].project_feedbacks)
 """
