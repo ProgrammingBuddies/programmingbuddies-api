@@ -1,7 +1,9 @@
-from api.models import db, User, UserHasProject, UserLink
+from api.models import db, User, UserHasProject, UserLink, UserFeedback
 
 class UserController:
     session = db.session()
+
+    # User
     def create_user(self, **kwargs):
         try:
             user = User(**kwargs)
@@ -51,11 +53,38 @@ class UserController:
         user = User.query.filter_by(id=id).first()
         
         if user == None:
-            return user
+            return None
         
         db.session.delete(user)
         db.session.commit()
         
         return user
+
+    # Feedback
+    def create_feedback(self, user_id, **kwargs):
+        try:
+            feedback = UserFeedback(user_id=user_id, **kwargs)
+            self.session.add(feedback)
+            self.session.commit()
+
+            return feedback
+        except:
+            return None
+
+    def get_all_feedbacks(self, user_id, **kwargs):
+        all_feedbacks = UserFeedback.query.filter_by(user_id=user_id).all()
+
+        return all_feedbacks
+
+    def delete_feedback(self, user_id, feedback_id):
+        feedback = UserFeedback.query.filter_by(user_id=user_id, id=feedback_id).first()
+
+        if feedback == None:
+            return None
+
+        db.session.delete(feedback)
+        db.session.commit()
+
+        return feedback
 
 userController = UserController()
