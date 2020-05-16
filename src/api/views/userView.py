@@ -15,7 +15,7 @@ def create_user():
 @app.route("/users/<id>", methods=['POST'])
 def update_user(id):
     if 'id' in request.get_json():
-        return "Failed to update user. Can not update user id.", 400
+        return "Failed to update user. Request body can not specify user id.", 400
 
     user = userController.update_user(id, **request.get_json())
 
@@ -50,11 +50,55 @@ def delete_user(id):
     else:
         return "", 404
 
-# Feedback
+# User Link
+@app.route("/users/<user_id>/links", methods=['POST'])
+def create_user_link(user_id):
+    if 'user_id' in request.get_json():
+        return "Failed to create link. Request body can not specify link's user_id.", 400
+
+    link = userController.create_link(user_id, **request.get_json())
+
+    if link == None:
+        return "Failed to create link", 400
+    else:
+        return jsonify(link.as_dict()), 201
+
+@app.route("/users/<user_id>/links/<link_id>", methods=['POST'])
+def update_user_link(user_id, link_id):
+    if 'user_id' in request.get_json():
+        return "Failed to update user link. Request body can not specify link's user_id.", 400
+    elif 'link_id' in request.get_json():
+        return "Failed to update user link. Request body can not specify link's link_id.", 400
+
+    link = userController.update_link(user_id, link_id, **request.get_json())
+
+    if link == None:
+        return "Failed to update user.", 400
+    else:
+        return jsonify(link.as_dict()), 200
+
+@app.route("/users/<user_id>/links", methods=['GET'])
+def get_all_user_links(user_id):
+    all_links = userController.get_all_links(user_id)
+
+    links = [ link.as_dict() for link in all_links ]
+
+    return jsonify(links), 200
+
+@app.route("/users/<user_id>/links/<link_id>", methods=['DELETE'])
+def delete_user_link(user_id, link_id):
+    link = userController.delete_link(user_id, link_id)
+
+    if link == None:
+        return "", 404
+    else:
+        return "", 200
+
+# User Feedback
 @app.route("/users/<user_id>/feedbacks", methods=['POST'])
 def create_user_feedback(user_id):
     if 'user_id' in request.get_json():
-        return "Failed to create feedback. Request body can not specify user_id.", 400
+        return "Failed to create feedback. Request body can not specify feedback's user_id.", 400
 
     feedback = userController.create_feedback(user_id, **request.get_json())
 

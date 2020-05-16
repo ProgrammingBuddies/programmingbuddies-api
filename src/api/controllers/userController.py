@@ -60,7 +60,51 @@ class UserController:
         
         return user
 
-    # Feedback
+    # User Link
+    def create_link(self, user_id, **kwargs):
+        try:
+            link = UserLink(user_id=user_id, **kwargs)
+            self.session.add(link)
+            self.session.commit()
+
+            return link
+        except:
+            return None
+    
+    def update_link(self, user_id, link_id, **kwargs):
+        link = UserLink.query.filter_by(user_id=user_id, id=link_id).first()
+
+        if link == None:
+            return None
+
+        for key, value in kwargs.items():
+            if not hasattr(link, key):
+                return None
+
+        for key, value in kwargs.items():
+            setattr(link, key, value)
+
+        db.session.commit()
+
+        return link
+
+    def get_all_links(self, user_id):
+        all_links = UserLink.query.filter_by(user_id=user_id).all()
+
+        return all_links
+
+    def delete_link(self, user_id, link_id):
+        link = UserLink.query.filter_by(user_id=user_id, id=link_id).first()
+
+        if link == None:
+            return None
+
+        db.session.delete(link)
+        db.session.commit()
+
+        return link
+
+    # User Feedback
     def create_feedback(self, user_id, **kwargs):
         try:
             feedback = UserFeedback(user_id=user_id, **kwargs)
