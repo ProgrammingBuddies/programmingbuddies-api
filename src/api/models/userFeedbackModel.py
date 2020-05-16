@@ -10,8 +10,8 @@ class UserFeedback(db.Model):
     def as_dict(self):
         obj_d = {
             'id': self.id,
-            'author': self.author_id,
-            'user': self.user_id,
+            'author_id': self.author_id,
+            'user_id': self.user_id,
             'rating': self.rating,
             'description': self.description,
         }

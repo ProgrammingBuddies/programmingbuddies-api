@@ -1,7 +1,9 @@
-from api.models import db, Project, UserHasProject, ProjectLink
+from api.models import db, Project, UserHasProject, ProjectLink, ProjectFeedback
 
 class ProjectController:
     session = db.session()
+
+    # Project
     def create_project(self, **kwargs):
         try:
             project = Project(**kwargs)
@@ -57,5 +59,32 @@ class ProjectController:
         db.session.commit()
         
         return project
+    
+    # Feedback
+    def create_feedback(self, project_id, **kwargs):
+        try:
+            feedback = ProjectFeedback(project_id=project_id, **kwargs)
+            self.session.add(feedback)
+            self.session.commit()
+
+            return feedback
+        except:
+            return None
+
+    def get_all_feedbacks(self, project_id):
+        all_feedbacks = ProjectFeedback.query.filter_by(project_id=project_id).all()
+
+        return all_feedbacks
+
+    def delete_feedback(self, project_id, feedback_id):
+        feedback = ProjectFeedback.query.filter_by(project_id=project_id, id=feedback_id).first()
+
+        if feedback == None:
+            return None
+
+        db.session.delete(feedback)
+        db.session.commit()
+
+        return feedback
 
 projectController = ProjectController()

@@ -71,7 +71,7 @@ class UserController:
         except:
             return None
 
-    def get_all_feedbacks(self, user_id, **kwargs):
+    def get_all_feedbacks(self, user_id):
         all_feedbacks = UserFeedback.query.filter_by(user_id=user_id).all()
 
         return all_feedbacks
