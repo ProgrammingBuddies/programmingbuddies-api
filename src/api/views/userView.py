@@ -15,7 +15,7 @@ def create_user():
 @app.route("/users/<id>", methods=['POST'])
 def update_user(id):
     if 'id' in request.get_json():
-        return "Failed to update user. Request body can not specify user id.", 400
+        return "Failed to update user. Request body can not specify user's id.", 400
 
     user = userController.update_user(id, **request.get_json())
 
@@ -54,12 +54,12 @@ def delete_user(id):
 @app.route("/users/<user_id>/links", methods=['POST'])
 def create_user_link(user_id):
     if 'user_id' in request.get_json():
-        return "Failed to create link. Request body can not specify link's user_id.", 400
+        return "Failed to create user link. Request body can not specify link's user_id.", 400
 
     link = userController.create_link(user_id, **request.get_json())
 
     if link == None:
-        return "Failed to create link", 400
+        return "Failed to create user link.", 400
     else:
         return jsonify(link.as_dict()), 201
 
@@ -73,7 +73,7 @@ def update_user_link(user_id, link_id):
     link = userController.update_link(user_id, link_id, **request.get_json())
 
     if link == None:
-        return "Failed to update user.", 400
+        return "Failed to update user link.", 400
     else:
         return jsonify(link.as_dict()), 200
 
@@ -103,7 +103,7 @@ def create_user_feedback(user_id):
     feedback = userController.create_feedback(user_id, **request.get_json())
 
     if feedback == None:
-        return "Failed to create feedback", 400
+        return "Failed to create feedback.", 400
     else:
         return jsonify(feedback.as_dict()), 201
 

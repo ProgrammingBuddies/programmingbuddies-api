@@ -13,7 +13,7 @@ class UserController:
             return user
         except:
             return None
-    
+
     def update_user(self, id, **kwargs):
         user = User.query.filter_by(id=id).first()
 
@@ -45,19 +45,19 @@ class UserController:
         # Remove all user's links
         for link in UserLink.query.filter_by(user_id=id).all():
             db.session.delete(link)
-        
+
         # Remove user from all projects
         for project in UserHasProject.query.filter_by(user_id=id).all():
             db.session.delete(project)
-        
+
         user = User.query.filter_by(id=id).first()
-        
+
         if user == None:
             return None
-        
+
         db.session.delete(user)
         db.session.commit()
-        
+
         return user
 
     # User Link
@@ -70,7 +70,7 @@ class UserController:
             return link
         except:
             return None
-    
+
     def update_link(self, user_id, link_id, **kwargs):
         link = UserLink.query.filter_by(user_id=user_id, id=link_id).first()
 
