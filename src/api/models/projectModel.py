@@ -27,7 +27,8 @@ class Project(db.Model):
             'creation_date': self.creation_date,
             'release_date': self.release_date,
             'users': [ user.user_as_dict() for user in self.users ],
-            'links': [ link.as_dict() for link in self.links ]
+            'links': [ link.as_dict() for link in self.links ],
+            'feedbacks': [ feedback.as_dict() for feedback in self.feedbacks ]
         }
         return obj_d
 
