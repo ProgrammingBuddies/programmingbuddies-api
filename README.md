@@ -11,6 +11,11 @@ API backend for Programming Buddies (projects management)
 - Download and install MySQL Community Server from `https://dev.mysql.com/downloads/mysql/`
 - `git clone https://github.com/ProgrammingBuddies/programmingbuddies-api.git`
 
+### The simple way
+
+Install docker-compose and do `docker-compose up`. Don't forget to setup your
+.env file.
+
 ### Pipenv
 - run `python -m pip install pipenv` to install pipenv
 - run `pipenv install` inside the repository
