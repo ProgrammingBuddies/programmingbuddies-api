@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  programmingbuddies-db:
+    image: mysql:8.0.20
+    restart: always
+    # You can change this but don't commit it
+    environment:
+      MYSQL_ROOT_PASSWORD: "secret-root"
+      MYSQL_PASSWORD: "secret"
+      MYSQL_USER: "PB"
+      MYSQL_DATABASE: "pbapi-db"
+    ports:
+      - 8080:8080
+      - 3306:3306
+    # Persistent database
+    volumes:
+      - db-data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+
+  programmingbuddies-api:
+    restart: always
+    build: .
+    depends_on:
+      - programmingbuddies-db
+    ports:
+      - 5001:5001
+    env_file:
+      - .env
+    # Make sure this is consistent with the DB service environment
+    environment:
+      CONNECT: "mysql+mysqlconnector://PB:secret@programmingbuddies-db:3306/pbapi-db"
+    volumes:
+      - .:/app
+    command: python src/runserver.py --reset-db
+
+# Persistent database
+networks:
+  default:
+    name: pb-net
+volumes:
+  db-data:
