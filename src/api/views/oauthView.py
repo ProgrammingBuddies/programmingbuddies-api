@@ -3,7 +3,6 @@ from os import environ
 from flask import Flask, request, redirect, session, url_for
 from flask_dance.contrib.github import make_github_blueprint, github
 
-print("hello")
 app.secret_key = environ.get("APP_SECRET")
 github_blueprint = make_github_blueprint(
     client_id = environ.get("GITHUB_ID"),
