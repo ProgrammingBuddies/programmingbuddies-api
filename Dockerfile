@@ -4,14 +4,13 @@ MAINTAINER Roch D'Amour <roch.damour@gmail.com>
 WORKDIR /app
 COPY . .
 
-RUN openssl req -x509 -newkey rsa:4096 \
-    -nodes -out cert.pem -keyout key.pem -days 365 \
-    -subj '/CN=localhost'
-
 RUN pip install pipenv \
     && pipenv install --system
 
 # Generate a openssl key.
-# We could probably use params instead of "localhost"
+# We could probably use correct params instead of "localhost"
+RUN openssl req -x509 -newkey rsa:4096 \
+    -nodes -out src/cert.pem -keyout src/key.pem -days 365 \
+    -subj '/CN=localhost'
 
-CMD python src/runserver.py
+CMD pipenv run python src/runserver.py
