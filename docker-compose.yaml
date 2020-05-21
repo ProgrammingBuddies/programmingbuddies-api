@@ -30,6 +30,8 @@ services:
     # Make sure this is consistent with the DB service environment
     environment:
       CONNECT: "mysql+mysqlconnector://PB:secret@programmingbuddies-db:3306/pbapi-db"
+      SERVER_HOST: "0.0.0.0"
+      SERVER_PORT: "5001"
     volumes:
       - .:/app
     command: python src/runserver.py --reset-db
