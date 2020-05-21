@@ -13,7 +13,7 @@ RUN pip install pipenv \
 # if you are using the provided docker-compose, which mount local folder to /app
 
 openssl req -x509 -newkey rsa:4096 \
-    -nodes -out src/cert.pem -keyout src/key.pem -days 365 \
+    -nodes -out cert.pem -keyout key.pem -days 365 \
     -subj '/CN=localhost'
 
 CMD pipenv run python src/runserver.py
