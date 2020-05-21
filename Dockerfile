@@ -9,7 +9,10 @@ RUN pip install pipenv \
 
 # Generate a openssl key.
 # We could probably use correct params instead of "localhost"
-RUN openssl req -x509 -newkey rsa:4096 \
+# Also note that you STILL NEED to run this inside your local repo
+# if you are using the provided docker-compose, which mount local folder to /app
+
+openssl req -x509 -newkey rsa:4096 \
     -nodes -out src/cert.pem -keyout src/key.pem -days 365 \
     -subj '/CN=localhost'
 
