@@ -12,7 +12,7 @@ RUN pip install pipenv \
 # Also note that you STILL NEED to run this inside your local repo
 # if you are using the provided docker-compose, which mount local folder to /app
 
-openssl req -x509 -newkey rsa:4096 \
+RUN openssl req -x509 -newkey rsa:4096 \
     -nodes -out cert.pem -keyout key.pem -days 365 \
     -subj '/CN=localhost'
 
