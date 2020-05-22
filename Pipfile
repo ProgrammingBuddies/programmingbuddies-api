@@ -13,6 +13,8 @@ sqlalchemy-utils = "*"
 mysql-connector-python = "*"
 flask-dance = "*"
 pyopenssl = "*"
+flask-swagger = "*"
+flask-swagger-ui = "*"
 
 [requires]
 python_version = "3.7"
