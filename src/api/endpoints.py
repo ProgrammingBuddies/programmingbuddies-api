@@ -24,7 +24,7 @@ def version():
     ---
     responses:
         200:
-            description: Everything went alright
+            description: List of versions of dependencies
     """
     return jsonify({
         "python_version": "{}.{}".format(version_info.major, version_info.minor),
@@ -61,8 +61,18 @@ def version():
         "werkzeug_version": "{}".format(pkg_resources.get_distribution('werkzeug').version)
     })
 
-@app.route("/swagger_spec")
+@app.route("/spec")
 def spec():
+    """
+        API spec
+        Return the swagger api specification.
+        ---
+        tags:
+            - Docs
+        responses:
+            200:
+                description: API spec documentation
+        """
     swag = swagger(app)
 
     swag['swagger'] = '2.0'
