@@ -248,7 +248,7 @@ def update_user_link(user_id, link_id):
             name: user_id
             type: integer
             required: true
-            description: Id of the user to update
+            description: Id of the user
         -   in: path
             name: link_id
             type: integer
@@ -315,7 +315,7 @@ def delete_user_link(user_id, link_id):
             name: user_id
             type: integer
             required: true
-            description: Id of user to delete
+            description: Id of the user
         -   in: path
             name: link_id
             type: integer
@@ -421,7 +421,7 @@ def delete_user_feedback(user_id, feedback_id):
             name: user_id
             type: integer
             required: true
-            description: Id of user to delete
+            description: Id of the user
         -   in: path
             name: feedback_id
             type: integer
