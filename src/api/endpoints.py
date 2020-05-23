@@ -22,6 +22,8 @@ def version():
     Get server's dependencies versions
     Returns versions of all dependencies
     ---
+    tags:
+        - Info
     responses:
         200:
             description: List of versions of dependencies
@@ -79,7 +81,7 @@ def spec():
 
     swag['info']['version'] = '1.0'
     swag['info']['title'] = 'Programming Buddies API'
-    swag['info']['description'] = 'Project\'s management system'
+    swag['info']['description'] = 'Projects\' management system'
 
     swag['info']['license'] = {'name': 'GPL 3.0', 'url': 'https://opensource.org/licenses/GPL-3.0'}
 
