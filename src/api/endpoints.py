@@ -20,6 +20,7 @@ def favicon():
 def version():
     """
     Get server's dependencies versions
+    Returns versions of all dependencies
     ---
     responses:
         200:
@@ -30,7 +31,7 @@ def version():
         "pyopenssl_version": "{}".format(pkg_resources.get_distribution('pyopenssl').version),
         "jinja2_version": "{}".format(pkg_resources.get_distribution('jinja2').version),
         "flask_version": "{}".format(pkg_resources.get_distribution('flask').version),
-        "cffi_version": "{}".format(pkg_resources.get_distribution('cffi').version),	
+        "cffi_version": "{}".format(pkg_resources.get_distribution('cffi').version),
         "click_version": "{}".format(pkg_resources.get_distribution('click').version),
         "cryptography_version": "{}".format(pkg_resources.get_distribution('cryptography').version),
         "itsdangerous_version": "{}".format(pkg_resources.get_distribution('itsdangerous').version),
@@ -45,6 +46,13 @@ def version():
 @app.route("/swagger_spec")
 def spec():
     swag = swagger(app)
-    swag['info']['version'] = "1.0"
-    swag['info']['title'] = "Programming Buddies API"
+
+    swag['swagger'] = '2.0'
+
+    swag['info']['version'] = '1.0'
+    swag['info']['title'] = 'Programming Buddies API'
+    swag['info']['description'] = 'Project\'s management system'
+
+    swag['info']['license'] = {'name': 'GPL 3.0', 'url': 'https://opensource.org/licenses/GPL-3.0'}
+
     return jsonify(swag)

@@ -12,8 +12,8 @@ API_URL = '/swagger_spec'
 SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
     SWAGGER_URL,
     API_URL,
-    config={
-        'app_name': "Seans-Python-Flask-REST-Boilerplate"
+    config = {
+        'app_name': "Programing Buddies API"
     }
 )
 app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
