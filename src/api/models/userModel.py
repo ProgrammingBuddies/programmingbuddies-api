@@ -7,6 +7,7 @@ from flask_login import UserMixin
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    github_id = db.Column(db.Integer)
     name = db.Column(db.String(80), nullable=False)
     bio = db.Column(db.Text)
     languages = db.Column(db.Text)
@@ -19,6 +20,7 @@ class User(UserMixin, db.Model):
     def as_dict(self):
         obj_d = {
             'id': self.id,
+            'github_id': self.github_id,
             'name': self.name,
             'bio': self.bio,
             'languages': self.languages,
