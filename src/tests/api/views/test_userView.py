@@ -61,3 +61,31 @@ class TestUserView(object):
 
         created_user = User.query.filter_by(id=user_id).first()
         assert response.get_json() == created_user.as_dict()
+
+    def test_get_all_users(self, client):
+        self.create_user_for_test_cases()
+
+        self.valid_data = {
+            'name': 'Valid',
+            'bio': 'new',
+            'languages': 'DE',
+            'interests': 'e',
+            'location': 'nowhere',
+            'occupation': 'cashier2.1'
+        }
+
+        self.create_user_for_test_cases()
+
+        response = client.get('/users')
+        assert response.status_code == 200
+
+        users_list = User.query.all()
+        users_dict = [users_list[0].as_dict(), users_list[1].as_dict()]
+        assert response.get_json() == [users_list[0].as_dict(), users_list[1].as_dict()]
+
+        db.session.delete(users_list[0])
+        db.session.commit()
+
+        response = client.get('/users')
+        assert response.status_code == 200
+        assert response.get_json() == [users_dict[1]]

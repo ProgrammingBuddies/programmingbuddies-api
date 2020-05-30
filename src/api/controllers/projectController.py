@@ -19,7 +19,7 @@ class ProjectController:
 
         if project == None:
             return None
-        
+
         for key, value in kwargs.items():
             if not hasattr(project, key):
                 return None
