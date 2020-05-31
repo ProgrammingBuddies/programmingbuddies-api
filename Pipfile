@@ -13,6 +13,7 @@ sqlalchemy-utils = "*"
 mysql-connector-python = "*"
 flask-dance = "*"
 pyopenssl = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.7"
