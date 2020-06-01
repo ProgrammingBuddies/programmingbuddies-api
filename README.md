@@ -23,7 +23,9 @@ Install docker-compose and do `docker-compose up`. Don't forget to setup your
 
 ### SSL
 - On Mac or linux install the openssl tool and run `openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365` inside the repository
-- On windows ... explanation will follow.
+- On windows 
+    1. Install OpenSSL for Windows [here](https://slproweb.com/products/Win32OpenSSL.html)
+    2. Execute the same command as on Mac inside the project directory.
 
 ### Environment
 - create a file `.env`

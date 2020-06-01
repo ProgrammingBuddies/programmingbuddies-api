@@ -14,6 +14,8 @@ mysql-connector-python = "*"
 flask-dance = "*"
 pyopenssl = "*"
 flask-cors = "*"
+flask-login = "*"
+blinker = "*"
 
 [requires]
 python_version = "3.7"
