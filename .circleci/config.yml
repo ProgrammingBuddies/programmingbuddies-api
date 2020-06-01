@@ -1,0 +1,46 @@
+version: 2.1
+
+jobs:
+  docker-build:
+   machine: true
+   steps:
+     - checkout
+     # Build the application image to make sure it works
+     - run:
+          command: docker build -t programmingbuddies/programmingbuddies-api .
+          name: Build docker image
+
+  docker-push:
+    machine: true
+    steps:
+      - checkout
+      # Log into dockerhub using docker cli.
+      # Credentials are stored in the UI using env variables (They are kept secret don't worry)
+      # https://circleci.com/docs/2.0/env-vars/#secrets-masking
+      - run: 
+          command: echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+          name: Dockerhub login
+
+      # Build the image.
+      # We could use something like $CIRCLE_BRANCH to correctly tag images,
+      # but latest is probably fine for now.
+      - run:
+           command: docker build -t programmingbuddies/programmingbuddies-api:latest .
+           name: Build docker image
+
+      # Push the built image to the dockerhub organization
+      - run:
+           command: docker push programmingbuddies/programmingbuddies-api:latest
+           name: Push image to registry
+
+workflows:
+  main:
+    jobs:
+      - docker-build
+      - docker-push:
+          filters:
+            branches:
+              only:
+                - develop
+          requires:
+            - docker-build
