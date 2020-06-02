@@ -40,6 +40,12 @@ Install docker-compose and do `docker-compose up`. Don't forget to setup your
 
 Your `.env` file should now look something like [example.env](https://github.com/ProgrammingBuddies/programmingbuddies-api/blob/develop/example.env)
 
+### Testing
+
+- to run multiple tests just specify the directory which contains them for example `pipenv run pytest src/tests`
+- - this will run all the tests in the `tests` directory
+- if you want to run test cases only in a particular file, then just give the full file path `pipenv run pytest src/tests/example.py`
+
 ## Milestones
 - [ ] build DB and endpoints with basic CRUD
 - [ ] add security for app (ie - bots, and non-human actors/clients)
