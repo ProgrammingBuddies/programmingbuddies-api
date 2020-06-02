@@ -1,20 +1,14 @@
 from tests.conftest import client
 from tests import db, Project
-from datetime import datetime
+from tests.api import create_project_for_test_cases
 
-class TestPorjectView(object):
+class TestProjectView(object):
 
     valid_data = {
         'name': 'PB api',
         'description': 'A cool project',
         'repository': 'http://github.xy.com'
     }
-
-    def create_project_for_test_cases(self):
-        new_project = Project(**self.valid_data)
-        db.session.add(new_project)
-        db.session.commit()
-        return new_project.id
 
     def test_create_project(self, client):
         response = client.post('/projects', json={"name": "Project"})
@@ -34,7 +28,7 @@ class TestPorjectView(object):
         # notice: should return 404 when doesen't exist insted of 400
         assert response.status_code == 404
 
-        project_id = self.create_project_for_test_cases()
+        project_id = create_project_for_test_cases(self.valid_data)
         response = client.post('/projects/{}'.format(project_id), json={'description': 'updated desc'})
         project = Project.query.filter_by(id=project_id).first()
         assert project.description == 'updated desc'

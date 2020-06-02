@@ -1,8 +1,14 @@
 from tests.conftest import client
 from tests import db, User
+from tests.api import create_user_for_test_cases
 
 class TestUserView(object):
 
+    """
+
+    """
+
+    # valid data for user creation
     valid_data = {
         'name': 'L Jone',
         'bio': 'coding...',
@@ -12,12 +18,6 @@ class TestUserView(object):
         'occupation': 'cashier'
     }
 
-    def create_user_for_test_cases(self):
-        new_user = User(**self.valid_data)
-        db.session.add(new_user)
-        db.session.commit()
-        return new_user.id
-
     def test_create_user(self, client):
         response = client.post('/users', json=self.valid_data)
         assert response.status_code == 201
@@ -26,7 +26,7 @@ class TestUserView(object):
         assert response.status_code == 400
 
     def test_update_user(self, client):
-        user_id = self.create_user_for_test_cases()
+        user_id = create_user_for_test_cases(self.valid_data)
 
         response = client.post('/users/1', json={})
         assert response.status_code == 400
@@ -46,7 +46,7 @@ class TestUserView(object):
         response = client.delete('/users/{}'.format(user_id))
         assert response.status_code == 404
 
-        user_id = self.create_user_for_test_cases()
+        user_id = create_user_for_test_cases(self.valid_data)
         response = client.delete('/users/{}'.format(user_id))
         assert response.status_code == 200
 
@@ -55,7 +55,7 @@ class TestUserView(object):
         response = client.get('/users/{}'.format(user_id))
         assert response.status_code == 404
 
-        user_id = self.create_user_for_test_cases()
+        user_id = create_user_for_test_cases(self.valid_data)
         response = client.get('/users/{}'.format(user_id))
         assert response.status_code == 200
 
@@ -63,7 +63,7 @@ class TestUserView(object):
         assert response.get_json() == created_user.as_dict()
 
     def test_get_all_users(self, client):
-        self.create_user_for_test_cases()
+        create_user_for_test_cases(self.valid_data)
 
         self.valid_data = {
             'name': 'Valid',
@@ -74,7 +74,7 @@ class TestUserView(object):
             'occupation': 'cashier2.1'
         }
 
-        self.create_user_for_test_cases()
+        create_user_for_test_cases(self.valid_data)
 
         response = client.get('/users')
         assert response.status_code == 200
@@ -89,3 +89,9 @@ class TestUserView(object):
         response = client.get('/users')
         assert response.status_code == 200
         assert response.get_json() == [users_dict[1]]
+
+        l = User(**self.valid_data)
+        db.session.add(l)
+        db.session.commit()
+
+        assert l.name == 1
