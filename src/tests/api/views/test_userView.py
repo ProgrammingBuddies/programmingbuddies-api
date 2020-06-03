@@ -4,10 +4,6 @@ from tests.api import create_user_for_test_cases
 
 class TestUserView(object):
 
-    """
-
-    """
-
     # valid data for user creation
     valid_data = {
         'name': 'L Jone',
@@ -26,7 +22,7 @@ class TestUserView(object):
         assert response.status_code == 400
 
     def test_update_user(self, client):
-        user_id = create_user_for_test_cases(self.valid_data)
+        user_id = create_user_for_test_cases(self.valid_data)["id"]
 
         response = client.post('/users/1', json={})
         assert response.status_code == 400
@@ -38,7 +34,6 @@ class TestUserView(object):
         response = client.post('/users/{}'.format(user_id), json={"name": "Updated Name"})
         assert response.status_code == 200
 
-        # created_user = User.query.filter_by(id=user_id).first()
         assert response.get_json()['name'] == "Updated Name"
 
     def test_delete_user(self, client):
@@ -46,7 +41,7 @@ class TestUserView(object):
         response = client.delete('/users/{}'.format(user_id))
         assert response.status_code == 404
 
-        user_id = create_user_for_test_cases(self.valid_data)
+        user_id = create_user_for_test_cases(self.valid_data)["id"]
         response = client.delete('/users/{}'.format(user_id))
         assert response.status_code == 200
 
@@ -55,12 +50,11 @@ class TestUserView(object):
         response = client.get('/users/{}'.format(user_id))
         assert response.status_code == 404
 
-        user_id = create_user_for_test_cases(self.valid_data)
+        user = create_user_for_test_cases(self.valid_data)
+        user_id = user["id"]
         response = client.get('/users/{}'.format(user_id))
         assert response.status_code == 200
-
-        created_user = User.query.filter_by(id=user_id).first()
-        assert response.get_json() == created_user.as_dict()
+        assert response.get_json() == user
 
     def test_get_all_users(self, client):
         create_user_for_test_cases(self.valid_data)
@@ -89,9 +83,3 @@ class TestUserView(object):
         response = client.get('/users')
         assert response.status_code == 200
         assert response.get_json() == [users_dict[1]]
-
-        l = User(**self.valid_data)
-        db.session.add(l)
-        db.session.commit()
-
-        assert l.name == 1

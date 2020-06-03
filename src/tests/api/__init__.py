@@ -25,16 +25,16 @@ def create_user_for_test_cases(data):
     new_user = User(**data)
     db.session.add(new_user)
     db.session.commit()
-    return new_user.id
+    return new_user.as_dict()
 
 def create_user_link_for_test_cases(data):
     new_user_link = UserLink(**data)
     db.session.add(new_user)
     db.session.commit()
-    return new_user_link.id
+    return new_user_link.as_dict()
 
 def create_project_for_test_cases(data):
     new_project_link = ProjectLink(**data)
     db.session.add(new_project_link)
     db.session.commit()
-    return new_project_link.id
+    return new_project_link.as_dict()
