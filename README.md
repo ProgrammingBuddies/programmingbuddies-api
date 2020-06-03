@@ -42,9 +42,9 @@ Your `.env` file should now look something like [example.env](https://github.com
 
 ### Testing
 
-- to run multiple tests just specify the directory which contains them for example `pipenv run pytest src/tests`
+- to run multiple tests just specify the directory which contains them for example `pipenv run pytest tests/`
 - - this will run all the tests in the `tests` directory
-- if you want to run test cases only in a particular file, then just give the full file path `pipenv run pytest src/tests/example.py`
+- if you want to run test cases only in a particular file, then just give the full file path `pipenv run pytest tests/example.py`
 
 ## Milestones
 - [ ] build DB and endpoints with basic CRUD
