@@ -35,7 +35,7 @@ Requirements:
 
 Your `.env` file should now look something like [example.env](https://github.com/ProgrammingBuddies/programmingbuddies-api/blob/develop/example.env)
 
-## Technologies used:
+## Tech stack:
 
 - Python
 - Flask
