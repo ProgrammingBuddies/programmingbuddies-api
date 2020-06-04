@@ -4,6 +4,7 @@ This script runs the api application using a development server.
 
 from os import environ
 from api import app
+from secrets import token_urlsafe
 
 if __name__ == '__main__':
     HOST = environ.get('SERVER_HOST', 'localhost')
