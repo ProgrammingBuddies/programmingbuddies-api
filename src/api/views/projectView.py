@@ -73,7 +73,7 @@ def create_project():
     else:
         return jsonify(project.as_dict()), 201
 
-@app.route("/projects/<id>", methods=['POST'])
+@app.route("/projects/<id>", methods=['PUT'])
 def update_project(id):
     """
     Update project
@@ -228,7 +228,7 @@ def create_project_link(project_id):
     else:
         return jsonify(link.as_dict()), 201
 
-@app.route("/projects/<project_id>/links/<link_id>", methods=['POST'])
+@app.route("/projects/<project_id>/links/<link_id>", methods=['PUT'])
 def update_project_link(project_id, link_id):
     """
     Update project link

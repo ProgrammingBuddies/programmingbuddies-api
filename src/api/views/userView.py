@@ -80,7 +80,7 @@ def create_user():
     else:
         return jsonify(user.as_dict()), 201
 
-@app.route("/users/<id>", methods=['POST'])
+@app.route("/users/<id>", methods=['PUT'])
 def update_user(id):
     """
     Update user
@@ -235,7 +235,7 @@ def create_user_link(user_id):
     else:
         return jsonify(link.as_dict()), 201
 
-@app.route("/users/<user_id>/links/<link_id>", methods=['POST'])
+@app.route("/users/<user_id>/links/<link_id>", methods=['PUT'])
 def update_user_link(user_id, link_id):
     """
     Update user link
