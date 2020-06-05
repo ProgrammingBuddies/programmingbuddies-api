@@ -3,13 +3,11 @@
 
   Creates valid model objects for testing purposes:
 
-    - these functions will give back the object's id
+    - insert data to the database which could be used for testing
 
-    - if you want to access the object properties, then run a query on the model with the given id
-      example: User.query.filter_by(id=returned_id)
+    - these functions will give back the created objects in dict format which is hardcoded at every model's as_dict instance method
 
-
-  -Call these function form any test case.
+    - call these functions form any test case.
 
 """
 

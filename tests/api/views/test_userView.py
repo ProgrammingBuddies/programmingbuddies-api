@@ -83,3 +83,34 @@ class TestUserView(object):
         response = client.get('/users')
         assert response.status_code == 200
         assert response.get_json() == [users_dict[1]]
+
+    # notice: Why do we need name in UserLink?
+    # notice: Won't the API will provide the UserLink, then why the endpoint expects a UserLink specification?
+    def test_create_user_link(self, client):
+        user = create_user_for_test_cases(self.valid_data)
+        url = '/users/{}/links'.format(user["id"])
+
+        response = client.post(url, json={"user_id": user["id"]})
+        assert response.status_code == 400
+
+        # response = client.post(url, )
+        # assert 1 == 1
+
+    def test_create_user_feedback(self, client):
+        user1 = create_user_for_test_cases(self.valid_data)
+
+        self.valid_data["name"] = "Other name"
+        user2 = create_user_for_test_cases(self.valid_data)
+
+        url = '/users/{}/feedbacks'.format(user2["id"])
+        response = client.post(url, json={"user_id": user2["id"]})
+        assert response.status_code == 400
+
+        feedback = {
+            "author_id": int(user1["id"]),
+            "rating": 5,
+            "description": "Cool guy!",
+        }
+
+        response = client.post(url, json=feedback)
+        assert response.status_code == 201
