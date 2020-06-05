@@ -1,8 +1,10 @@
 from tests.conftest import client
 from tests import db, User
+from tests.api import create_user_for_test_cases
 
 class TestUserView(object):
 
+    # valid data for user creation
     valid_data = {
         'name': 'L Jone',
         'bio': 'coding...',
@@ -12,12 +14,6 @@ class TestUserView(object):
         'occupation': 'cashier'
     }
 
-    def create_user_for_test_cases(self):
-        new_user = User(**self.valid_data)
-        db.session.add(new_user)
-        db.session.commit()
-        return new_user.id
-
     def test_create_user(self, client):
         response = client.post('/users', json=self.valid_data)
         assert response.status_code == 201
@@ -26,7 +22,7 @@ class TestUserView(object):
         assert response.status_code == 400
 
     def test_update_user(self, client):
-        user_id = self.create_user_for_test_cases()
+        user_id = create_user_for_test_cases(self.valid_data)["id"]
 
         response = client.post('/users/1', json={})
         assert response.status_code == 400
@@ -38,7 +34,6 @@ class TestUserView(object):
         response = client.post('/users/{}'.format(user_id), json={"name": "Updated Name"})
         assert response.status_code == 200
 
-        # created_user = User.query.filter_by(id=user_id).first()
         assert response.get_json()['name'] == "Updated Name"
 
     def test_delete_user(self, client):
@@ -46,7 +41,7 @@ class TestUserView(object):
         response = client.delete('/users/{}'.format(user_id))
         assert response.status_code == 404
 
-        user_id = self.create_user_for_test_cases()
+        user_id = create_user_for_test_cases(self.valid_data)["id"]
         response = client.delete('/users/{}'.format(user_id))
         assert response.status_code == 200
 
@@ -55,15 +50,14 @@ class TestUserView(object):
         response = client.get('/users/{}'.format(user_id))
         assert response.status_code == 404
 
-        user_id = self.create_user_for_test_cases()
+        user = create_user_for_test_cases(self.valid_data)
+        user_id = user["id"]
         response = client.get('/users/{}'.format(user_id))
         assert response.status_code == 200
-
-        created_user = User.query.filter_by(id=user_id).first()
-        assert response.get_json() == created_user.as_dict()
+        assert response.get_json() == user
 
     def test_get_all_users(self, client):
-        self.create_user_for_test_cases()
+        create_user_for_test_cases(self.valid_data)
 
         self.valid_data = {
             'name': 'Valid',
@@ -74,7 +68,7 @@ class TestUserView(object):
             'occupation': 'cashier2.1'
         }
 
-        self.create_user_for_test_cases()
+        create_user_for_test_cases(self.valid_data)
 
         response = client.get('/users')
         assert response.status_code == 200
@@ -89,3 +83,34 @@ class TestUserView(object):
         response = client.get('/users')
         assert response.status_code == 200
         assert response.get_json() == [users_dict[1]]
+
+    # notice: Why do we need name in UserLink?
+    # notice: Won't the API will provide the UserLink, then why the endpoint expects a UserLink specification?
+    def test_create_user_link(self, client):
+        user = create_user_for_test_cases(self.valid_data)
+        url = '/users/{}/links'.format(user["id"])
+
+        response = client.post(url, json={"user_id": user["id"]})
+        assert response.status_code == 400
+
+        # response = client.post(url, )
+        # assert 1 == 1
+
+    def test_create_user_feedback(self, client):
+        user1 = create_user_for_test_cases(self.valid_data)
+
+        self.valid_data["name"] = "Other name"
+        user2 = create_user_for_test_cases(self.valid_data)
+
+        url = '/users/{}/feedbacks'.format(user2["id"])
+        response = client.post(url, json={"user_id": user2["id"]})
+        assert response.status_code == 400
+
+        feedback = {
+            "author_id": int(user1["id"]),
+            "rating": 5,
+            "description": "Cool guy!",
+        }
+
+        response = client.post(url, json=feedback)
+        assert response.status_code == 201
