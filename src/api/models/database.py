@@ -2,9 +2,16 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_utils import database_exists, create_database
 from api import app
 from os import environ
+
+# Check CONNECT
 db_url = environ.get("CONNECT")
 if db_url is None or db_url=="":
     raise ValueError("Environment Variable 'CONNECT' has to be set in the .env file")
+
+# Check if it's sqlite
+if db_url == 'sqlite':
+    db_url = 'sqlite:///db.sqlite3'
+
 app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 
 db = SQLAlchemy(app)
