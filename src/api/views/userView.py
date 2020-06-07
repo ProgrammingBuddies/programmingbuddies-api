@@ -64,7 +64,7 @@ def delete_user(id):
 @app.before_request
 def before_sign_in():
     session.permanent = True
-    app.permanent_session_lifetime = timedelta(seconds=20)
+    app.permanent_session_lifetime = timedelta(seconds=300)
 
 @app.route("/login", methods=["GET"])
 def login_route():
