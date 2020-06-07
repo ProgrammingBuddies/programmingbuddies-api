@@ -3,9 +3,7 @@ from api.models import db
 from api.models.userHasProjectModel import UserHasProject
 from api.models.userLinkModel import UserLink
 
-from flask_login import UserMixin
-
-class User(UserMixin, db.Model):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     github_id = db.Column(db.Integer)
     name = db.Column(db.String(80), nullable=False)
