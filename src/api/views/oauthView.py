@@ -27,6 +27,7 @@ def login_route():
     account = request.args.get('account')
     session['action'] = "login"
     session['redirect'] = request.args.get('redirect')
+    session['state'] = request.args.get('state','{}')
 
     if account == 'github':
         return redirect(url_for("github.login"))
@@ -39,6 +40,7 @@ def register_route():
     session['action'] = "register"
     session['username'] = request.args.get('username')
     session['redirect'] = request.args.get('redirect')
+    session['state'] = request.args.get('state','{}')
 
     if account == 'github':
         return redirect(url_for("github.login"))
@@ -60,10 +62,10 @@ def login(blueprint):
         resp = github.get("/user").json()
         id = resp["id"]
         user = userController.get_user(github_id=id)
-        redirect_token = ""
+        redirect_token = f"?state={session['state']}"
         if user:
             access_token = create_access_token(identity=user)
-            redirect_token = f"?token={access_token}"
+            redirect_token += f"&token={access_token}"
 
         return redirect(session['redirect'] + redirect_token)
 
@@ -72,11 +74,10 @@ def register(blueprint):
         resp = github.get("/user").json()
         id = resp["id"]
         user = userController.get_user(github_id=id)
-        redirect_token = ""
         if not user:
             user = userController.create_user(github_id=id, name=session["username"])
             access_token = create_access_token(identity=user)
-            redirect_token = f"?token={access_token}"
+        redirect_token = f"?state={session['state']}token={access_token}"
         return redirect(session['redirect'] + redirect_token)
 
 
