@@ -77,7 +77,7 @@ def register(blueprint):
         if not user:
             user = userController.create_user(github_id=id, name=session["username"])
             access_token = create_access_token(identity=user)
-        redirect_token = f"?state={session['state']}token={access_token}"
+        redirect_token = f"?state={session['state']}&token={access_token}"
         return redirect(session['redirect'] + redirect_token)
 
 
