@@ -348,3 +348,7 @@ healthchecksdb
 # Visual Studio Code
 .vscode/
 *.pem
+
+
+# Sqlite
+db.sqlite3
