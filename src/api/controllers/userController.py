@@ -12,6 +12,7 @@ class UserController:
 
             return user
         except:
+            self.session.rollback()
             return None
 
     def update_user(self, id, **kwargs):
@@ -69,6 +70,7 @@ class UserController:
 
             return link
         except:
+            self.session.rollback()
             return None
 
     def update_link(self, user_id, link_id, **kwargs):
@@ -113,6 +115,7 @@ class UserController:
 
             return feedback
         except:
+            self.session.rollback()
             return None
 
     def get_all_feedbacks(self, user_id):
