@@ -1,7 +1,7 @@
 from tests.conftest import client
 from tests import db, Project
-from tests.api import create_project_for_test_cases
 
+from tests.api import create_project_for_test_cases
 class TestProjectView(object):
 
     valid_data = {
@@ -41,3 +41,13 @@ class TestProjectView(object):
         # project_id = self.create_project_for_test_cases()
         # response = client.delete('/project/{}'.format(project_id))
         # assert response.status_code == 202
+
+    def test_create_porject_link(self, client):
+        project = create_project_for_test_cases(self.valid_data)
+        url = '/projects/{}/links'.format(project["id"])
+
+        response = client.post(url, json={"user_id": 0})
+        assert response.status_code == 400
+
+        response = client.post(url, json={"name": "Main link", "url": "http://main.link"})
+        assert response.status_code == 201

@@ -69,6 +69,7 @@ class ProjectController:
 
             return link
         except:
+            self.session.rollback()
             return None
 
     def update_link(self, project_id, link_id, **kwargs):
@@ -113,6 +114,7 @@ class ProjectController:
 
             return feedback
         except:
+            self.session.rollback()
             return None
 
     def get_all_feedbacks(self, project_id):
