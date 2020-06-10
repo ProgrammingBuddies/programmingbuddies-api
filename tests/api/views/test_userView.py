@@ -1,6 +1,6 @@
 from tests.conftest import client
-from tests import db, User, UserLink
-from tests.api import create_user_for_test_cases, create_user_link_for_test_cases
+from tests import db, User, UserLink, UserFeedback
+from tests.api import create_user_for_test_cases, create_user_link_for_test_cases, create_user_feedback_for_test_cases
 
 class TestUserView(object):
 
@@ -28,8 +28,8 @@ class TestUserView(object):
         assert response.status_code == 400
 
         # notice: Should we respond to update_user request without json data with status code 200?
-        response = client.post('/users/{}'.format(user_id), json={})
-        assert response.status_code == 400
+        # response = client.post('/users/{}'.format(user_id), json={})
+        # assert response.status_code == 400
 
         response = client.post('/users/{}'.format(user_id), json={"name": "Updated Name"})
         assert response.status_code == 200
@@ -174,3 +174,50 @@ class TestUserView(object):
 
         response = client.post(url, json=feedback)
         assert response.status_code == 201
+
+    def test_get_all_user_feedbacks(self, client):
+        user1 = create_user_for_test_cases(self.valid_data)
+
+        self.valid_data["name"] = "new user2"
+        user2 = create_user_for_test_cases(self.valid_data)
+
+        self.valid_data["name"] = "new user3"
+        user3 = create_user_for_test_cases(self.valid_data)
+
+        create_user_feedback_for_test_cases(user1, user2)
+        create_user_feedback_for_test_cases(user3, user1)
+        create_user_feedback_for_test_cases(user2, user1)
+
+        url = "/users/{}/feedbacks"
+
+        response = client.get(url.format(user1["id"]))
+        r_json = response.get_json()
+        assert len(r_json) == 2
+        assert [r_json[0]["user_id"], r_json[0]["author_id"], r_json[1]["user_id"], r_json[1]["author_id"]] == \
+               [user1["id"], user3["id"], user1["id"], user2["id"]]
+
+        response = client.get(url.format(user2["id"]))
+        r_json = response.get_json()
+        assert len(r_json) == 1
+        assert [r_json[0]["user_id"], r_json[0]["author_id"]] == [user2["id"], user1["id"]]
+
+    def test_delete_user_feedback(self, client):
+        user1 = create_user_for_test_cases(self.valid_data)
+
+        self.valid_data["name"] = "delete user2"
+        user2 = create_user_for_test_cases(self.valid_data)
+
+        fb1 = create_user_feedback_for_test_cases(user1, user2)
+        fb2 = create_user_feedback_for_test_cases(user1, user2)
+
+        url = "/users/{0}/feedbacks/{1}"
+
+        response = client.delete(url.format(user1["id"], 0))
+        assert response.status_code == 404
+
+        response = client.delete(url.format(0, fb1["id"]))
+        assert response.status_code == 404
+
+        response = client.delete(url.format(user2["id"], fb1["id"]))
+        assert response.status_code == 200
+        assert UserFeedback.query.filter_by(user_id=user2["id"]).count() == 1

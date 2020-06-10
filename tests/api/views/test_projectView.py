@@ -37,7 +37,6 @@ class TestProjectView(object):
         response = client.delete('/projects/0')
         assert response.status_code == 404
 
-        # notice: the project links should be required? if not then the view's response is wrong
         # project_id = self.create_project_for_test_cases()
         # response = client.delete('/project/{}'.format(project_id))
         # assert response.status_code == 202
