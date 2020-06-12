@@ -58,7 +58,7 @@ def oathed(blueprint, token):
         return "", 501
 
 
-def login(blueprint):
+def login_callback(blueprint):
     if blueprint.name == "github":
         resp = github.get("/user").json()
         id = resp["id"]
@@ -70,7 +70,7 @@ def login(blueprint):
 
         return redirect(session.pop("redirect") + redirect_token)
 
-def register(blueprint):
+def register_callback(blueprint):
     if blueprint.name == "github":
         resp = github.get("/user").json()
         id = resp["id"]
