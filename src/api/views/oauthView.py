@@ -38,6 +38,7 @@ def login_route():
 def register_route():
     account = request.args.get('account')
     session['action'] = "register"
+    # TODO remove or not?
     session['username'] = request.args.get('username')
     session['redirect'] = request.args.get('redirect')
     session['state'] = request.args.get('state','{}')
@@ -62,12 +63,12 @@ def login(blueprint):
         resp = github.get("/user").json()
         id = resp["id"]
         user = userController.get_user(github_id=id)
-        redirect_token = f"?state={session['state']}"
+        redirect_token = f"?state={session.pop('state', '{}')}"
         if user:
             access_token = create_access_token(identity=user)
             redirect_token += f"&token={access_token}"
 
-        return redirect(session['redirect'] + redirect_token)
+        return redirect(session.pop("redirect") + redirect_token)
 
 def register(blueprint):
     if blueprint.name == "github":
@@ -75,12 +76,13 @@ def register(blueprint):
         id = resp["id"]
         user = userController.get_user(github_id=id)
         if not user:
-            user = userController.create_user(github_id=id, name=session["username"])
+            user = userController.create_user(github_id=id, name=session.pop('username'))
             access_token = create_access_token(identity=user)
-        redirect_token = f"?state={session['state']}&token={access_token}"
-        return redirect(session['redirect'] + redirect_token)
+        redirect_token = f"?state={session.pop('state')}&token={access_token}"
+        return redirect(session.pop('redirect') + redirect_token)
 
-
+# Actually deprecated
+# should be /user in userview but I'll leave it until Routes branch adds and merges it
 @app.route("/getcurrentuser", methods=["GET"])
 @jwt_required
 def getCurrentUser():
