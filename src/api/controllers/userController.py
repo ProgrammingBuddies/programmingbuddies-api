@@ -1,7 +1,12 @@
 from api.models import db, User, UserHasProject, UserLink, UserFeedback
+from flask_login import LoginManager
+from api import app
 
 class UserController:
     session = db.session()
+
+    login_manager = LoginManager()
+    login_manager.init_app(app)
 
     # User
     def create_user(self, **kwargs):
@@ -32,6 +37,20 @@ class UserController:
 
         return user
 
+    def update_user(self, id, **kwargs):
+        user = User.query.filter_by(id=id).first()
+
+        if user == None:
+            return user
+
+        for key, value in kwargs.items():
+            setattr(user, key, value)
+
+        db.session.commit()
+
+        return user
+
+    @login_manager.user_loader
     def get_user(self, **kwargs):
         user = User.query.filter_by(**kwargs).first()
 

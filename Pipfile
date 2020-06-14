@@ -16,6 +16,9 @@ pyopenssl = "*"
 flask-swagger = "*"
 flask-swagger-ui = "*"
 pytest = "*"
+flask-cors = "*"
+flask-login = "*"
+blinker = "*"
 
 [requires]
 python_version = "3.7"

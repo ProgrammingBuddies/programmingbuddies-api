@@ -5,6 +5,7 @@ This script runs the api application using a development server.
 from os import environ
 from flask_swagger_ui import get_swaggerui_blueprint
 from api import app
+from secrets import token_urlsafe
 
 # swagger specific
 SWAGGER_URL = '/docs'
