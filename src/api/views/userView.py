@@ -108,7 +108,7 @@ def update_user(id):
             description: Failed to update user
     """
     if 'id' in request.get_json():
-        return "Failed to update user. Request body can not specify user's id.", 400
+        return "Failed to update user. Request body can not specify user's id.", 501
 
     user = userController.update_user(id, **request.get_json())
 
@@ -116,14 +116,6 @@ def update_user(id):
         return "Failed to update user.", 400
     else:
         return jsonify(user.as_dict()), 200
-
-@app.route("/users/<id>", methods=['POST'])
-def update_user(id):
-    if 'id' in request.get_json():
-        return "", 501
-    user = userController.update_user(id, **request.get_json())
-
-    return jsonify(user.as_dict()), 200
 
 @app.route("/users/<id>", methods=['GET'])
 def get_user(id):

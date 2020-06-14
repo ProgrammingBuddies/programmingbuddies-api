@@ -100,7 +100,7 @@ def update_project(id):
             description: Failed to update project
     """
     if 'id' in request.get_json():
-        return "Failed to update project. Request body can not specify project's id.", 400
+        return "Failed to update project. Request body can not specify project's id.", 501
 
     project = projectController.update_project(id, **request.get_json())
 
@@ -108,14 +108,6 @@ def update_project(id):
         return "Failed to update project.", 400
     else:
         return jsonify(project.as_dict()), 200
-
-@app.route("/projects/<id>", methods=['POST'])
-def update_project(id):
-    if 'id' in request.get_json():
-        return "", 501
-    project = projectController.update_project(id, **request.get_json())
-
-    return jsonify(project.as_dict()), 200
 
 @app.route("/projects/<id>", methods=['GET'])
 def get_project(id):
