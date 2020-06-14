@@ -4,9 +4,7 @@ from api.models.userHasProjectModel import UserHasProject
 from api.models.userLinkModel import UserLink
 from api.models.projectFeedbackModel import ProjectFeedback
 
-from flask_login import UserMixin
-
-class User(UserMixin, db.Model):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     github_id = db.Column(db.Integer)
     name = db.Column(db.String(80), nullable=False)

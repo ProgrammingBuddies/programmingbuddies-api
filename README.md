@@ -35,6 +35,7 @@ Run the server:
     - Under your GitHub account Settings go to Developer settings and OAuth Apps
     - Create a new one and set the homepage url to `https://localhost:5001/` and Authorization callback to `https://localhost:5001/login/github/authorized`
     - Copy the Client Id and Client Secret from that site and save them in `.env` as `GITHUB_ID` and `GITHUB_SECRET` respectively
+4. Furthermore a `JWT_SECRET_KEY` is required for signing the JWT-tokens
 
 Your `.env` file should now look something like [example.env](https://github.com/ProgrammingBuddies/programmingbuddies-api/blob/develop/example.env)
 
