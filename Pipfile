@@ -15,6 +15,7 @@ flask-dance = "*"
 pyopenssl = "*"
 flask-swagger = "*"
 flask-swagger-ui = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.7"
