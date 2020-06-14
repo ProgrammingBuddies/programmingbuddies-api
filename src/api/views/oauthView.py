@@ -51,9 +51,9 @@ def register_route():
 @oauth_authorized.connect
 def oathed(blueprint, token):
     if session['action'] == 'login':
-        return login(blueprint)
+        return login_callback(blueprint)
     elif session['action'] == 'register':
-        return register(blueprint)
+        return register_callback(blueprint)
     else:
         return "", 501
 
@@ -76,7 +76,7 @@ def register_callback(blueprint):
         id = resp["id"]
         user = userController.get_user(github_id=id)
         if not user:
-            user = userController.create_user(github_id=id, name=session.pop('username'))
+            user = userController.create_user(github_id=id, name=session.pop('username', "Anton"))
             access_token = create_access_token(identity=user)
         redirect_token = f"?state={session.pop('state')}&token={access_token}"
         return redirect(session.pop('redirect') + redirect_token)
