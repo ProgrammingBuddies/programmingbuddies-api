@@ -12,8 +12,10 @@ class Project(db.Model):
     development_status = db.Column(db.Integer, nullable=False, default=0)
     creation_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
     release_date = db.Column(db.DateTime)
+    repository = db.Column(db.Text, nullable=False)
     users = db.relationship('UserHasProject', back_populates='project')
     links = db.relationship('ProjectLink', backref='project', lazy=True)
+    feedbacks = db.relationship('ProjectFeedback', backref='project')
 
     def as_dict(self):
         obj_d = {
@@ -25,7 +27,8 @@ class Project(db.Model):
             'creation_date': self.creation_date,
             'release_date': self.release_date,
             'users': [ user.user_as_dict() for user in self.users ],
-            'links': [ link.as_dict() for link in self.links ]
+            'links': [ link.as_dict() for link in self.links ],
+            'feedbacks': [ feedback.as_dict() for feedback in self.feedbacks ]
         }
         return obj_d
 

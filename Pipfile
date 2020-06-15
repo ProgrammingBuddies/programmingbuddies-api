@@ -13,9 +13,13 @@ sqlalchemy-utils = "*"
 mysql-connector-python = "*"
 flask-dance = "*"
 pyopenssl = "*"
+flask-swagger = "*"
+flask-swagger-ui = "*"
+pytest = "*"
 flask-cors = "*"
 blinker = "*"
 flask-jwt-extended = "*"
+atomicwrites = "*"
 
 [requires]
 python_version = "3.7"

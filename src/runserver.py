@@ -3,8 +3,22 @@ This script runs the api application using a development server.
 """
 
 from os import environ
+from flask_swagger_ui import get_swaggerui_blueprint
 from api import app
 from secrets import token_urlsafe
+
+# swagger specific
+SWAGGER_URL = '/docs'
+API_URL = '/spec'
+SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config = {
+        'app_name': "Programing Buddies API"
+    }
+)
+app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
+# end swagger specific
 
 if __name__ == '__main__':
     HOST = environ.get('SERVER_HOST', 'localhost')
