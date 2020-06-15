@@ -19,6 +19,7 @@ pytest = "*"
 flask-cors = "*"
 blinker = "*"
 flask-jwt-extended = "*"
+atomicwrites = "*"
 
 [requires]
 python_version = "3.7"
