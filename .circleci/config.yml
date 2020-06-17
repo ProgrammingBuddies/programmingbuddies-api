@@ -1,14 +1,37 @@
-version: 2.1
+version: 2
 
 jobs:
-  docker-build:
-   machine: true
-   steps:
-     - checkout
-     # Build the application image to make sure it works
-     - run:
+  build:
+    machine: true
+    steps:
+      - checkout
+      # Build the application image to make sure it works
+      - run:
           command: docker build -t programmingbuddies/programmingbuddies-api .
           name: Build docker image
+
+  test:
+    docker:
+      - image: circleci/python:3.7 # every job must define an image for the docker executor and subsequent jobs may define a different image.
+        environment:
+          CONNECT: "mysql+mysqlconnector://PB:secret@localhost:3306/pbapi-db"
+          SERVER_HOST: "0.0.0.0"
+          SERVER_PORT: "5001"
+      - image: mysql:8.0.20 # an example of how to specify a service container
+        environment:
+          MYSQL_ROOT_PASSWORD: "secret-root"
+          MYSQL_PASSWORD: "secret"
+          MYSQL_USER: "PB"
+          MYSQL_DATABASE: "pbapi-db"
+    steps: # steps that comprise the `build` job
+    - checkout # check out source code to working directory
+    - run:
+        command: |
+            sudo pip install pipenv
+            pipenv install
+    - run:
+        command: |
+            pipenv run pytest tests/
 
   docker-push:
     machine: true
@@ -36,11 +59,15 @@ jobs:
 workflows:
   main:
     jobs:
-      - docker-build
+      - build
+      - test:
+          requires:
+            - build
       - docker-push:
           filters:
             branches:
               only:
                 - develop
           requires:
-            - docker-build
+            - build
+            - test
