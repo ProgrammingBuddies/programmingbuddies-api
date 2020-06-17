@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 
 jobs:
   build:
@@ -9,6 +9,7 @@ jobs:
       - run:
           command: docker build -t programmingbuddies/programmingbuddies-api .
           name: Build docker image
+
 
   test:
     docker:
