@@ -24,12 +24,14 @@ class TestUserView(object):
     def test_update_user(self, client):
         user_id = create_user_for_test_cases(self.valid_data)["id"]
 
-        response = client.put('/users/1', json={})
+        response = client.put('/users/1', json={"name": "Updated name"})
         assert response.status_code == 404
 
-        # notice: Should we respond to update_user request without json data with status code 200?
-        # response = client.post('/users/{}'.format(user_id), json={})
-        # assert response.status_code == 400
+        response = client.put('/users/1', json={})
+        assert response.status_code == 400
+
+        response = client.put('/users/{}'.format(user_id), json={})
+        assert response.status_code == 400
 
         response = client.put('/users/{}'.format(user_id), json={"name": "Updated Name"})
         assert response.status_code == 200
@@ -117,9 +119,8 @@ class TestUserView(object):
         response = client.put(url, json={"link_id": 1})
         assert response.status_code == 400
 
-        # notice: Should we respond to update_user request without json data with status code 200?
-        # response = client.post(url, json={})
-        # assert response.status_code == 400
+        response = client.put(url, json={})
+        assert response.status_code == 400
 
         response = client.put(url, json={"name": "New Name"})
         assert response.status_code == 200

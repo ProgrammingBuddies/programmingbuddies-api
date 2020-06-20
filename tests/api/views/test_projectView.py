@@ -17,8 +17,8 @@ class TestProjectView(object):
         response = client.post('/projects', json=self.valid_data)
         assert response.status_code == 201
 
-        # response = client.post('/projects')
-        # assert response.status_code == 400
+        response = client.post('/projects')
+        assert response.status_code == 400
 
     def test_update_project(self, client):
 
@@ -85,13 +85,17 @@ class TestProjectView(object):
 
         url = '/projects/{0}/links/{1}'
 
-        # notice: this shouldn't give 500 error
-        # response = client.post(url.format(p1["id"], 0))
-        # assert response.status_code == 404
+        response = client.put(url.format(p1["id"], 0), json={"name": "NLink"})
+        assert response.status_code == 404
 
-        # notice: this shouldn't give 500 error
-        # response = client.post(url.format(0, p1_link["id"]))
-        # assert response.status_code == 404
+        response = client.put(url.format(p1["id"], 0))
+        assert response.status_code == 400
+
+        response = client.put(url.format(0, p1_link["id"]), json={"name": "NLink"})
+        assert response.status_code == 404
+
+        response = client.put(url.format(0, p1_link["id"]))
+        assert response.status_code == 400
 
         response = client.put(url.format(p1["id"], p1_link["id"]), json={"name": "Nlink"})
         assert response.status_code == 200
