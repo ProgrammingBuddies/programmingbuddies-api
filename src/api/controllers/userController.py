@@ -261,7 +261,7 @@ def create_user_link(user_id):
         return "Failed to create user link. Request body can not specify link's user_id.", 400
 
     try:
-        link = UserLink(user_id=user_id, **kwargs)
+        link = UserLink(user_id=user_id, **request.get_json())
         session.add(link)
         session.commit()
 
@@ -313,11 +313,11 @@ def update_user_link(user_id, link_id):
     if link == None:
         return "Failed to update user link.", 404
 
-    for key, value in kwargs.items():
+    for key, value in request.get_json().items():
         if not hasattr(link, key):
             return "Failed to update user link.", 400
 
-    for key, value in kwargs.items():
+    for key, value in request.get_json().items():
         setattr(link, key, value)
 
     db.session.commit()
