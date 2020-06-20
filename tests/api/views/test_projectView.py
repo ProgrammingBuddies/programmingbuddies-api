@@ -23,7 +23,7 @@ class TestProjectView(object):
     def test_update_project(self, client):
 
         # project id doesn't exist
-        response = client.post('/projects/0', json={'name': 'Updated PB'})
+        response = client.put('/projects/0', json={'name': 'Updated PB'})
 
         # notice: should return 404 when doesen't exist insted of 400
         assert response.status_code == 404
@@ -94,7 +94,7 @@ class TestProjectView(object):
         # response = client.post(url.format(0, p1_link["id"]))
         # assert response.status_code == 404
 
-        response = client.post(url.format(p1["id"], p1_link["id"]), json={"name": "Nlink"})
+        response = client.put(url.format(p1["id"], p1_link["id"]), json={"name": "Nlink"})
         assert response.status_code == 200
         assert response.get_json()["name"] == "Nlink"
 
