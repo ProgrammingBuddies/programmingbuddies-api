@@ -43,7 +43,7 @@ class TestProjectView(object):
         project2 = create_project_for_test_cases(self.valid_data)
 
         response = client.delete('/projects/{}'.format(project1["id"]))
-        assert response.status_code == 202
+        assert response.status_code == 204
 
     def test_get_project(self, client):
         response = client.get('/projects/{}'.format(0))
@@ -139,7 +139,7 @@ class TestProjectView(object):
 
 
         response = client.delete(url.format(p1["id"], p_link1["id"]))
-        assert response.status_code == 200
+        assert response.status_code == 204
         items = ProjectLink.query.all()
         assert len(items) == 1
         assert items[0].name == "Other"

@@ -43,7 +43,7 @@ class TestUserView(object):
 
         user_id = create_user_for_test_cases(self.valid_data)["id"]
         response = client.delete('/users/{}'.format(user_id))
-        assert response.status_code == 200
+        assert response.status_code == 204
 
     def test_get_user(self, client):
         user_id = None
@@ -150,7 +150,7 @@ class TestUserView(object):
         assert response.status_code == 404
 
         response = client.delete("/users/{0}/links/{1}".format(user["id"], link1.id))
-        assert response.status_code == 200
+        assert response.status_code == 204
 
         recorded_links = UserLink.query.all()
         assert len(recorded_links) == 1
@@ -219,5 +219,5 @@ class TestUserView(object):
         assert response.status_code == 404
 
         response = client.delete(url.format(user2["id"], fb1["id"]))
-        assert response.status_code == 200
+        assert response.status_code == 204
         assert UserFeedback.query.filter_by(user_id=user2["id"]).count() == 1
