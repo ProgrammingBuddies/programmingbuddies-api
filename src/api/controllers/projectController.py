@@ -105,6 +105,8 @@ def update_project(id):
         404:
             description: Project not found
     """
+    if not request.get_json():
+        return "Failed to update project.", 400
     if 'id' in request.get_json():
         return "Failed to update project. Request body can not specify project's id.", 501
 
@@ -244,6 +246,8 @@ def create_project_link(project_id):
         400:
             description: Failed to create project link
     """
+    if not request.get_json():
+        return "Failed to create project link.", 400
     if 'project_id' in request.get_json():
         return "Failed to create project link. Request body can not specify link's project_id.", 400
 
@@ -290,6 +294,8 @@ def update_project_link(project_id, link_id):
         404:
             description: Project link not found
     """
+    if not request.get_json():
+        return "Failed to update project link.", 400
     if 'project_id' in request.get_json():
         return "Failed to update project link. Request body can not specify link's project_id.", 400
     elif 'link_id' in request.get_json():
@@ -410,6 +416,8 @@ def create_project_feedback(project_id):
         400:
             description: Failed to create project feedback
     """
+    if not request.get_json():
+        return "Failed to create project feedback.", 400
     if 'project_id' in request.get_json():
         return "Failed to create feedback. Request body can not specify feedback's project_id.", 400
 

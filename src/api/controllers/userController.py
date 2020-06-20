@@ -114,6 +114,8 @@ def update_user(id):
         404:
             description: User not found
     """
+    if not request.get_json():
+        return "Failed to update user.", 400
     if 'id' in request.get_json():
         return "Failed to update user. Request body can not specify user's id.", 501
 
@@ -125,12 +127,12 @@ def update_user(id):
         if not hasattr(user, key):
             return "Failed to update user.", 400
 
-        for key, value in request.get_json().items():
-            setattr(user, key, value)
+    for key, value in request.get_json().items():
+        setattr(user, key, value)
 
-        db.session.commit()
+    db.session.commit()
 
-        return jsonify(user.as_dict()), 200
+    return jsonify(user.as_dict()), 200
 
 @app.route("/users/<id>", methods=['GET'])
 def get_user(id):
@@ -257,6 +259,8 @@ def create_user_link(user_id):
         400:
             description: Failed to create user link
     """
+    if not request.get_json():
+        return "Failed to create user link.", 400
     if 'user_id' in request.get_json():
         return "Failed to create user link. Request body can not specify link's user_id.", 400
 
@@ -303,6 +307,8 @@ def update_user_link(user_id, link_id):
         404:
             description: User link not found
     """
+    if not request.get_json():
+        return "Failed to update user link.", 400
     if 'user_id' in request.get_json():
         return "Failed to update user link. Request body can not specify link's user_id.", 400
     elif 'link_id' in request.get_json():
@@ -423,6 +429,8 @@ def create_user_feedback(user_id):
         400:
             description: Failed to create user feedback
     """
+    if not request.get_json():
+        return "Failed to create user feedback.", 400
     if 'user_id' in request.get_json():
         return "Failed to create feedback. Request body can not specify feedback's user_id.", 400
 
