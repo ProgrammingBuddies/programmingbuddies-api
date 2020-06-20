@@ -311,7 +311,7 @@ def update_user_link(user_id, link_id):
     link = UserLink.query.filter_by(user_id=user_id, id=link_id).first()
 
     if link == None:
-        return "Failed to update user link.", 404
+        return "", 404
 
     for key, value in request.get_json().items():
         if not hasattr(link, key):

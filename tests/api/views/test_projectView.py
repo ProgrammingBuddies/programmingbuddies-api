@@ -24,8 +24,6 @@ class TestProjectView(object):
 
         # project id doesn't exist
         response = client.put('/projects/0', json={'name': 'Updated PB'})
-
-        # notice: should return 404 when doesen't exist insted of 400
         assert response.status_code == 404
 
         project_id = create_project_for_test_cases(self.valid_data)

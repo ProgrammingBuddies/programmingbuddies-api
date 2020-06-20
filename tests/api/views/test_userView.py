@@ -25,7 +25,7 @@ class TestUserView(object):
         user_id = create_user_for_test_cases(self.valid_data)["id"]
 
         response = client.put('/users/1', json={})
-        assert response.status_code == 400
+        assert response.status_code == 404
 
         # notice: Should we respond to update_user request without json data with status code 200?
         # response = client.post('/users/{}'.format(user_id), json={})
@@ -107,7 +107,7 @@ class TestUserView(object):
         url = "/users/{0}/links/{1}".format(0, link["id"])
 
         response = client.put(url, json={"name": "Portfolio"})
-        assert response.status_code == 400
+        assert response.status_code == 404
 
         url = "/users/{0}/links/{1}".format(user["id"], link["id"])
 
