@@ -111,7 +111,7 @@ def update_user(id):
             description: User updated successfully
         400:
             description: Failed to update user
-        404
+        404:
             description: User not found
     """
     if 'id' in request.get_json():
@@ -300,7 +300,7 @@ def update_user_link(user_id, link_id):
             description: User link updated successfully
         400:
             description: Failed to update user link
-        404
+        404:
             description: User link not found
     """
     if 'user_id' in request.get_json():

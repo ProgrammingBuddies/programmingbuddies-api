@@ -287,7 +287,7 @@ def update_project_link(project_id, link_id):
             description: Project link updated successfully
         400:
             description: Failed to update project link
-        404
+        404:
             description: Project link not found
     """
     if 'project_id' in request.get_json():
