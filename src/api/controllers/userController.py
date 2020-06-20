@@ -111,13 +111,15 @@ def update_user(id):
             description: User updated successfully
         400:
             description: Failed to update user
+        404
+            description: User not found
     """
     if 'id' in request.get_json():
         return "Failed to update user. Request body can not specify user's id.", 501
 
     user = User.query.filter_by(id=id).first()
     if user == None:
-        return "Failed to update user.", 400
+        return "", 404
 
     for key, value in request.get_json().items():
         if not hasattr(user, key):
@@ -190,7 +192,7 @@ def delete_user(id):
             required: true
             description: Id of the user to delete
     responses:
-        200:
+        204:
             description: User deleted successfully
         401:
             description: Not allowed to delete the specified user
@@ -214,7 +216,7 @@ def delete_user(id):
         db.session.delete(user)
         db.session.commit()
 
-        return "", 200
+        return "", 204
     else:
         return "You cannot delete an other user", 401
 
@@ -298,6 +300,8 @@ def update_user_link(user_id, link_id):
             description: User link updated successfully
         400:
             description: Failed to update user link
+        404
+            description: User link not found
     """
     if 'user_id' in request.get_json():
         return "Failed to update user link. Request body can not specify link's user_id.", 400
@@ -307,7 +311,7 @@ def update_user_link(user_id, link_id):
     link = UserLink.query.filter_by(user_id=user_id, id=link_id).first()
 
     if link == None:
-        return "Failed to update user link.", 400
+        return "Failed to update user link.", 404
 
     for key, value in kwargs.items():
         if not hasattr(link, key):
@@ -364,7 +368,7 @@ def delete_user_link(user_id, link_id):
             required: true
             description: Id of the user link to delete
     responses:
-        200:
+        204:
             description: User link deleted successfully
         404:
             description: User link not found
@@ -377,7 +381,7 @@ def delete_user_link(user_id, link_id):
     db.session.delete(link)
     db.session.commit()
 
-    return "", 200
+    return "", 204
 
 # User Feedback
 @app.route("/users/<user_id>/feedbacks", methods=['POST'])
@@ -476,7 +480,7 @@ def delete_user_feedback(user_id, feedback_id):
             required: true
             description: Id of the user feedback to delete
     responses:
-        200:
+        204:
             description: User feedback deleted successfully
         404:
             description: User feedback not found
@@ -489,4 +493,4 @@ def delete_user_feedback(user_id, feedback_id):
     db.session.delete(feedback)
     db.session.commit()
 
-    return "", 200
+    return "", 204

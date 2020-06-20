@@ -102,6 +102,8 @@ def update_project(id):
             description: Project updated successfully
         400:
             description: Failed to update project
+        404:
+            description: Project not found
     """
     if 'id' in request.get_json():
         return "Failed to update project. Request body can not specify project's id.", 501
@@ -109,7 +111,7 @@ def update_project(id):
     project = Project.query.filter_by(id=id).first()
 
     if project == None:
-        return "Failed to update project.", 400
+        return "", 404
 
     for key, value in request.get_json().items():
         if not hasattr(project, key):
@@ -182,9 +184,9 @@ def delete_project(id):
             required: true
             description: Id of the project to delete
     responses:
-        200:
+        204:
             description: Project deleted successfully
-        400:
+        404:
             description: Project not found
     """
     # Remove all project's links
@@ -203,7 +205,7 @@ def delete_project(id):
     db.session.delete(project)
     db.session.commit()
 
-    return "", 200
+    return "", 204
 
 # Project Link
 @app.route("/projects/<project_id>/links", methods=['POST'])
@@ -285,6 +287,8 @@ def update_project_link(project_id, link_id):
             description: Project link updated successfully
         400:
             description: Failed to update project link
+        404
+            description: Project link not found
     """
     if 'project_id' in request.get_json():
         return "Failed to update project link. Request body can not specify link's project_id.", 400
@@ -294,7 +298,7 @@ def update_project_link(project_id, link_id):
     link = ProjectLink.query.filter_by(project_id=project_id, id=link_id).first()
 
     if link == None:
-        return "Failed to update project link.", 400
+        return "", 404
 
     for key, value in request.get_json().items():
         if not hasattr(link, key):
@@ -351,7 +355,7 @@ def delete_project_link(project_id, link_id):
             required: true
             description: Id of the project link to delete
     responses:
-        200:
+        204:
             description: Project link deleted successfully
         404:
             description: Project link not found
@@ -364,7 +368,7 @@ def delete_project_link(project_id, link_id):
     db.session.delete(link)
     db.session.commit()
 
-    return "", 200
+    return "", 204
 
 # Project Feedback
 @app.route("/projects/<project_id>/feedbacks", methods=['POST'])
@@ -463,7 +467,7 @@ def delete_project_feedback(project_id, feedback_id):
             required: true
             description: Id of the project feedback to delete
     responses:
-        200:
+        204:
             description: Project feedback deleted successfully
         404:
             description: Project feedback not found
@@ -476,4 +480,4 @@ def delete_project_feedback(project_id, feedback_id):
     db.session.delete(feedback)
     db.session.commit()
 
-    return "", 200
+    return "", 204
