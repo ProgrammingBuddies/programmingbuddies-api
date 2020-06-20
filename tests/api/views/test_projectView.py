@@ -26,8 +26,9 @@ class TestProjectView(object):
         response = client.put('/projects/0', json={'name': 'Updated PB'})
         assert response.status_code == 404
 
-        project_id = create_project_for_test_cases(self.valid_data)
-        response = client.post('/projects/{}'.format(project_id), json={'description': 'updated desc'})
+        project_id = create_project_for_test_cases(self.valid_data)['id']
+        response = client.put('/projects/{}'.format(project_id), json={'description': 'updated desc'})
+        assert response.status_code == 200
         project = Project.query.filter_by(id=project_id).first()
         assert project.description == 'updated desc'
 
