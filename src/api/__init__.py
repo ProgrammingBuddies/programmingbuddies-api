@@ -14,4 +14,5 @@ app.config['JSON_SORT_KEYS'] = False
 from api.models import db
 import api.models
 import api.endpoints
+import api.controllers
 import api.views

@@ -17,19 +17,18 @@ class TestProjectView(object):
         response = client.post('/projects', json=self.valid_data)
         assert response.status_code == 201
 
-        # response = client.post('/projects')
-        # assert response.status_code == 400
+        response = client.post('/projects')
+        assert response.status_code == 400
 
     def test_update_project(self, client):
 
         # project id doesn't exist
-        response = client.post('/projects/0', json={'name': 'Updated PB'})
-
-        # notice: should return 404 when doesen't exist insted of 400
+        response = client.put('/projects/0', json={'name': 'Updated PB'})
         assert response.status_code == 404
 
-        project_id = create_project_for_test_cases(self.valid_data)
-        response = client.post('/projects/{}'.format(project_id), json={'description': 'updated desc'})
+        project_id = create_project_for_test_cases(self.valid_data)['id']
+        response = client.put('/projects/{}'.format(project_id), json={'description': 'updated desc'})
+        assert response.status_code == 200
         project = Project.query.filter_by(id=project_id).first()
         assert project.description == 'updated desc'
 
@@ -43,7 +42,7 @@ class TestProjectView(object):
         project2 = create_project_for_test_cases(self.valid_data)
 
         response = client.delete('/projects/{}'.format(project1["id"]))
-        assert response.status_code == 202
+        assert response.status_code == 204
 
     def test_get_project(self, client):
         response = client.get('/projects/{}'.format(0))
@@ -86,15 +85,19 @@ class TestProjectView(object):
 
         url = '/projects/{0}/links/{1}'
 
-        # notice: this shouldn't give 500 error
-        # response = client.post(url.format(p1["id"], 0))
-        # assert response.status_code == 404
+        response = client.put(url.format(p1["id"], 0), json={"name": "NLink"})
+        assert response.status_code == 404
 
-        # notice: this shouldn't give 500 error
-        # response = client.post(url.format(0, p1_link["id"]))
-        # assert response.status_code == 404
+        response = client.put(url.format(p1["id"], 0))
+        assert response.status_code == 400
 
-        response = client.post(url.format(p1["id"], p1_link["id"]), json={"name": "Nlink"})
+        response = client.put(url.format(0, p1_link["id"]), json={"name": "NLink"})
+        assert response.status_code == 404
+
+        response = client.put(url.format(0, p1_link["id"]))
+        assert response.status_code == 400
+
+        response = client.put(url.format(p1["id"], p1_link["id"]), json={"name": "Nlink"})
         assert response.status_code == 200
         assert response.get_json()["name"] == "Nlink"
 
@@ -139,7 +142,7 @@ class TestProjectView(object):
 
 
         response = client.delete(url.format(p1["id"], p_link1["id"]))
-        assert response.status_code == 200
+        assert response.status_code == 204
         items = ProjectLink.query.all()
         assert len(items) == 1
         assert items[0].name == "Other"
