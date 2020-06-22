@@ -2,5 +2,5 @@
 The controller package
 """
 
-import api.controllers.userController
-import api.controllers.projectController
+from api.controllers.userController import userController
+from api.controllers.projectController import projectController

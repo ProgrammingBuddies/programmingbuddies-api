@@ -7,7 +7,7 @@
 
     - these functions will give back the created objects in dict format which is hardcoded at every model's as_dict instance method
 
-    - call these functions from any test case.
+    - call these functions form any test case.
 
 """
 
