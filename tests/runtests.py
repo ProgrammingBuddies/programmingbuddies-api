@@ -1,6 +1,6 @@
 response = """
 
-Use: pipenv run pytest tests/
+Use: pipenv run pytest src/tests/
 
 """
 

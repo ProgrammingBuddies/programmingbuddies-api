@@ -24,16 +24,14 @@ class TestUserView(object):
     def test_update_user(self, client):
         user_id = create_user_for_test_cases(self.valid_data)["id"]
 
-        response = client.put('/users/1', json={"name": "Updated name"})
-        assert response.status_code == 404
-
-        response = client.put('/users/1', json={})
+        response = client.post('/users/1', json={})
         assert response.status_code == 400
 
-        response = client.put('/users/{}'.format(user_id), json={})
-        assert response.status_code == 400
+        # notice: Should we respond to update_user request without json data with status code 200?
+        # response = client.post('/users/{}'.format(user_id), json={})
+        # assert response.status_code == 400
 
-        response = client.put('/users/{}'.format(user_id), json={"name": "Updated Name"})
+        response = client.post('/users/{}'.format(user_id), json={"name": "Updated Name"})
         assert response.status_code == 200
 
         assert response.get_json()['name'] == "Updated Name"
@@ -45,7 +43,7 @@ class TestUserView(object):
 
         user_id = create_user_for_test_cases(self.valid_data)["id"]
         response = client.delete('/users/{}'.format(user_id))
-        assert response.status_code == 204
+        assert response.status_code == 200
 
     def test_get_user(self, client):
         user_id = None
@@ -108,21 +106,22 @@ class TestUserView(object):
 
         url = "/users/{0}/links/{1}".format(0, link["id"])
 
-        response = client.put(url, json={"name": "Portfolio"})
-        assert response.status_code == 404
+        response = client.post(url, json={"name": "Portfolio"})
+        assert response.status_code == 400
 
         url = "/users/{0}/links/{1}".format(user["id"], link["id"])
 
-        response = client.put(url, json={"user_id": 0})
+        response = client.post(url, json={"user_id": 0})
         assert response.status_code == 400
 
-        response = client.put(url, json={"link_id": 1})
+        response = client.post(url, json={"link_id": 1})
         assert response.status_code == 400
 
-        response = client.put(url, json={})
-        assert response.status_code == 400
+        # notice: Should we respond to update_user request without json data with status code 200?
+        # response = client.post(url, json={})
+        # assert response.status_code == 400
 
-        response = client.put(url, json={"name": "New Name"})
+        response = client.post(url, json={"name": "New Name"})
         assert response.status_code == 200
         assert response.get_json()["name"] == "New Name"
 
@@ -151,7 +150,7 @@ class TestUserView(object):
         assert response.status_code == 404
 
         response = client.delete("/users/{0}/links/{1}".format(user["id"], link1.id))
-        assert response.status_code == 204
+        assert response.status_code == 200
 
         recorded_links = UserLink.query.all()
         assert len(recorded_links) == 1
@@ -220,5 +219,5 @@ class TestUserView(object):
         assert response.status_code == 404
 
         response = client.delete(url.format(user2["id"], fb1["id"]))
-        assert response.status_code == 204
+        assert response.status_code == 200
         assert UserFeedback.query.filter_by(user_id=user2["id"]).count() == 1
