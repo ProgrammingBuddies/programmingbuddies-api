@@ -36,19 +36,16 @@ Run the server:
     - Create a new one and set the homepage url to `https://localhost:5001/` and Authorization callback to `https://localhost:5001/login/github/authorized`
     - Copy the Client Id and Client Secret from that site and save them in `.env` as `GITHUB_ID` and `GITHUB_SECRET` respectively
 4. Furthermore a `JWT_SECRET_KEY` is required for signing the JWT-tokens
+    - pick a strong passphrase so that attackers can't brute-force it and sign tokens distinguishing as your server
 
 Your `.env` file should now look something like [example.env](https://github.com/ProgrammingBuddies/programmingbuddies-api/blob/develop/example.env)
 
 ### Testing
 
 - to run multiple tests just specify the directory which contains them for example `pipenv run pytest tests/`
-- - this will run all the tests in the `tests` directory
+    - this will run all the tests in the `tests` directory
 - if you want to run test cases only in a particular file, then just give the full file path `pipenv run pytest tests/example.py`
 
-## Milestones
-- [ ] build DB and endpoints with basic CRUD
-- [ ] add security for app (ie - bots, and non-human actors/clients)
-- [ ] add users and profile stores as well as registration/management API endpoints for users
 ## Tech stack:
 
 - Python
