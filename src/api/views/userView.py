@@ -132,32 +132,22 @@ def update_user():
 
     return userController.update_user(get_jwt_identity(), **request.get_json())
 
-@app.route("/users/<id>", methods=['GET'])
-def get_user(id):
+@app.route("/user", methods=['GET'])
+@jwt_required
+def get_user():
     """
     Get user
-    Retreives user with `id`
+    Retreives authenticated user
     ---
     tags:
         - User
-    parameters:
-        -   in: path
-            name: id
-            type: integer
-            required: true
-            description: Id of the user to retrieve
     responses:
         200:
             description: User object
         404:
-            description: User not found
+            description: User the token belonged to doesn't exist anymore
     """
-    user = userController.get_user(id=id)
-
-    if user:
-        return jsonify(user.as_dict()), 200
-    else:
-        return "", 404
+    return userController.get_user_from_jwt()
 
 @app.route("/users", methods=['GET'])
 def get_all_users():
