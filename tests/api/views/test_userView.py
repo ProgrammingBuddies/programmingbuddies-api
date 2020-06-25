@@ -14,12 +14,6 @@ class TestUserView(object):
         'occupation': 'cashier'
     }
 
-    def test_create_user(self, client):
-        response = client.post('/users', json=self.valid_data)
-        assert response.status_code == 201
-
-        response = client.post('/users', json={})
-        assert response.status_code == 400
 
     def test_update_user(self, client):
         token = create_access_token_for_test_cases(self.valid_data)
