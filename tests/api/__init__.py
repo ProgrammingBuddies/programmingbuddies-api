@@ -20,6 +20,10 @@ def create_project_for_test_cases(data):
 
     return new_project.as_dict()
 
+def delete_user_for_test_cases(user):
+    db.session.delete(user)
+    db.session.commit()
+
 def create_project_link_for_test_cases(data):
     new_project_link = ProjectLink(**data)
     db.session.add(new_project_link)
@@ -31,7 +35,7 @@ def create_access_token_for_test_cases(data):
     new_user = User(**data)
     db.session.add(new_user)
     db.session.commit()
-    return create_access_token(identity=new_user)
+    return create_access_token(identity=new_user), new_user
 
 def create_user_for_test_cases(data):
     new_user = User(**data)
