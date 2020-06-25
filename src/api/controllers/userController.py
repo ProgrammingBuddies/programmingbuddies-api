@@ -1,6 +1,5 @@
 from api.models import db, User, UserHasProject, UserLink, UserFeedback
 from api import app
-from api.utils import fail, success
 from flask_jwt_extended import get_jwt_identity
 from flask import jsonify
 
@@ -14,32 +13,35 @@ class UserController:
             self.session.add(user)
             self.session.commit()
 
-            return user
+            return user, "OK", 200
         except:
             self.session.rollback()
-            return None
+            return None, "Forbidden Attributes", 403
 
     def update_user(self, id, **kwargs):
         user = User.query.filter_by(id=id).first()
 
         if user == None:
-            return fail("user not found", 404)
+            return None, "user not found", 404
 
         for key, value in kwargs.items():
             if not hasattr(user, key):
-                return fail("forbidden attribute", 403)
+                return None, "forbidden attribute", 403
 
         for key, value in kwargs.items():
             setattr(user, key, value)
 
         db.session.commit()
 
-        return success(user.as_dict())
+        return user, "OK", 200
 
     def get_user(self, **kwargs):
         user = User.query.filter_by(**kwargs).first()
 
-        return user
+        if user is None:
+            return None, "User Not Found", 404
+            
+        return user, "OK", 200
 
     def get_all_users(self, **kwargs):
         all_users = User.query.all()
@@ -58,13 +60,12 @@ class UserController:
         user = User.query.filter_by(id=id).first()
 
         if user == None:
-            return fail("user not found", 404)
+            return None, "user not found", 404
 
         db.session.delete(user)
         db.session.commit()
 
-        return success(user.as_dict())
-
+        return user, "OK", 200
     # User Link
     def create_link(self, user_id, **kwargs):
         try:
@@ -139,9 +140,6 @@ class UserController:
         return feedback
 
     def get_user_from_jwt(self):
-        user = self.get_user(id=get_jwt_identity())
-        if user is None:
-            return fail("User not found")
-        return success(user.as_dict())
+        return self.get_user(id=get_jwt_identity())
 
 userController = UserController()

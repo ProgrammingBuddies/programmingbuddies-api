@@ -1,10 +1,8 @@
 from flask import jsonify
 
-def fail(msg, code=400):
-    return {"status": "failed", "msg": msg}, int(code)
-
-def success(data, code=200):
-    return {"status": "success", "data": data}, int(code)
-
-def jsonify_response(data, code):
-    return jsonify(data), code
+def wrap_response(data, msg, code):
+    obj = {"msg": msg}
+    if not data is None:
+        obj["data"] = data.as_dict()
+    return jsonify(obj), code
+    
