@@ -1,5 +1,7 @@
 from flask import request, jsonify, session, Flask, redirect, session, url_for
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from api import app
+from api.utils import fail, success
 from api.controllers import userController
 from os import environ
 
@@ -81,41 +83,54 @@ def create_user():
     else:
         return jsonify(user.as_dict()), 201
 
-@app.route("/users/<id>", methods=['PUT'])
-def update_user(id):
+@app.route("/user", methods=['PUT'])
+@jwt_required
+def update_user():
     """
     Update user
-    Updates user with `id` using the data in request body
+    Updates authenticated user with the data in request body
     ---
     tags:
         - User
     parameters:
-        -   in: path
-            name: id
-            type: integer
-            required: true
-            description: Id of user to update
         -   in: body
             name: User
             required: true
-            description: User object containing data to update
+            description: User attributes to update. Any combination of attributes is valid
             schema:
-                $ref: "#/definitions/User"
+                id: UserUpdate
+                properties:
+                    name:
+                        type: string
+                        description: (Optional) Name of the user
+                    bio:
+                        type: string
+                        description: (Optional) Biography of the user
+                    languages:
+                        type: string
+                        description: (Optional) List of programming languages the user uses
+                    interests:
+                        type: string
+                        description: (Optional) Interests of the user
+                    location:
+                        type: string
+                        description: (Optional) Location of the user
+                    occupation:
+                        type: string
+                        description: (Optional) Formal occupation, eg. student at X or works at Y
     responses:
         200:
             description: User updated successfully
-        400:
-            description: Failed to update user
+        403:
+            description: Forbidden Parameters used
+        404:
+            description: User the token belonged to doesn't exist anymore
     """
+
     if 'id' in request.get_json():
-        return "Failed to update user. Request body can not specify user's id.", 501
+        return fail("Failed to update user. Request body can not specify user's id.", 403)
 
-    user = userController.update_user(id, **request.get_json())
-
-    if user == None:
-        return "Failed to update user.", 400
-    else:
-        return jsonify(user.as_dict()), 200
+    return userController.update_user(get_jwt_identity(), **request.get_json())
 
 @app.route("/users/<id>", methods=['GET'])
 def get_user(id):

@@ -27,7 +27,7 @@ class UserController:
 
         for key, value in kwargs.items():
             if not hasattr(user, key):
-                return fail("forbidden attribute", 401)
+                return fail("forbidden attribute", 403)
 
         for key, value in kwargs.items():
             setattr(user, key, value)
