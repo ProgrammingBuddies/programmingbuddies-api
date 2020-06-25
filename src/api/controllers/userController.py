@@ -16,7 +16,7 @@ class UserController:
             return user, "OK", 200
         except:
             self.session.rollback()
-            return None, "Forbidden Attributes", 403
+            return None, "Forbidden Attributes", 400
 
     def update_user(self, id, **kwargs):
         user = User.query.filter_by(id=id).first()
@@ -26,7 +26,7 @@ class UserController:
 
         for key, value in kwargs.items():
             if not hasattr(user, key):
-                return None, "forbidden attribute", 403
+                return None, "forbidden attribute", 400
 
         for key, value in kwargs.items():
             setattr(user, key, value)
@@ -40,7 +40,7 @@ class UserController:
 
         if user is None:
             return None, "User Not Found", 404
-            
+
         return user, "OK", 200
 
     def get_all_users(self, **kwargs):
