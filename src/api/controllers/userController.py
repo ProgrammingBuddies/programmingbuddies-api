@@ -138,4 +138,10 @@ class UserController:
 
         return feedback
 
+    def get_user_from_jwt(self):
+        user = self.get_user(id=get_jwt_identity())
+        if user is None:
+            return fail("User not found")
+        return success(user.as_dict())
+
 userController = UserController()
