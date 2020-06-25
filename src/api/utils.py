@@ -1,7 +1,10 @@
 from flask import jsonify
 
 def fail(msg, code=400):
-    return jsonify({"status": "failed", "msg": msg}), int(code)
+    return {"status": "failed", "msg": msg}, int(code)
 
 def success(data, code=200):
-    return jsonify({"status": "success", "data": data}), int(code)
+    return {"status": "success", "data": data}, int(code)
+
+def jsonify_response(data, code):
+    return jsonify(data), code

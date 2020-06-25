@@ -1,7 +1,7 @@
 from flask import request, jsonify, session, Flask, redirect, session, url_for
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from api import app
-from api.utils import fail, success
+from api.utils import fail, success, jsonify_response
 from api.controllers import userController
 from os import environ
 
@@ -53,7 +53,7 @@ def update_user():
     if 'id' in request.get_json():
         return fail("Failed to update user. Request body can not specify user's id.", 403)
 
-    return userController.update_user(get_jwt_identity(), **request.get_json())
+    return jsonify_response(*userController.update_user(get_jwt_identity(), **request.get_json()))
 
 @app.route("/user", methods=['GET'])
 @jwt_required
@@ -70,7 +70,7 @@ def get_user():
         404:
             description: User the token belonged to doesn't exist anymore
     """
-    return userController.get_user_from_jwt()
+    return jsonify_response(*userController.get_user_from_jwt())
 
 @app.route("/users", methods=['GET'])
 def get_all_users():
@@ -106,7 +106,7 @@ def delete_user():
             description: User the token belonged to doesn't exist anymore
     """
     
-    return userController.delete_user(get_jwt_identity())
+    return jsonify_response(*userController.delete_user(get_jwt_identity()))
 
 # User Link
 @app.route("/users/<user_id>/links", methods=['POST'])
