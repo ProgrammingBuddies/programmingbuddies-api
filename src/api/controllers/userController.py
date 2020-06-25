@@ -1,5 +1,8 @@
 from api.models import db, User, UserHasProject, UserLink, UserFeedback
 from api import app
+from api.utils import fail, success
+from flask_jwt_extended import get_jwt_identity
+from flask import jsonify
 
 class UserController:
     session = db.session()
@@ -20,31 +23,18 @@ class UserController:
         user = User.query.filter_by(id=id).first()
 
         if user == None:
-            return None
+            return fail("user not found", 404)
 
         for key, value in kwargs.items():
             if not hasattr(user, key):
-                return None
+                return fail("forbidden attribute", 401)
 
         for key, value in kwargs.items():
             setattr(user, key, value)
 
         db.session.commit()
 
-        return user
-
-    def update_user(self, id, **kwargs):
-        user = User.query.filter_by(id=id).first()
-
-        if user == None:
-            return user
-
-        for key, value in kwargs.items():
-            setattr(user, key, value)
-
-        db.session.commit()
-
-        return user
+        return success(user.as_dict())
 
     def get_user(self, **kwargs):
         user = User.query.filter_by(**kwargs).first()
@@ -68,12 +58,12 @@ class UserController:
         user = User.query.filter_by(id=id).first()
 
         if user == None:
-            return None
+            return fail("user not found", 404)
 
         db.session.delete(user)
         db.session.commit()
 
-        return user
+        return success(user.as_dict())
 
     # User Link
     def create_link(self, user_id, **kwargs):
