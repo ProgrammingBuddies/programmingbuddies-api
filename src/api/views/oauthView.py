@@ -62,11 +62,13 @@ def login_callback(blueprint):
     if blueprint.name == "github":
         resp = github.get("/user").json()
         id = resp["id"]
-        user = userController.get_user(github_id=id)
+        user, msg, code = userController.get_user(github_id=id)
         redirect_token = f"?state={session.pop('state', '{}')}"
         if user:
             access_token = create_access_token(identity=user)
             redirect_token += f"&token={access_token}"
+        else:
+            redirect_token += f"&msg={msg}&code={code}"
 
         return redirect(session.pop("redirect") + redirect_token)
 
@@ -74,10 +76,16 @@ def register_callback(blueprint):
     if blueprint.name == "github":
         resp = github.get("/user").json()
         id = resp["id"]
-        user = userController.get_user(github_id=id)
-        if not user:
-            user = userController.create_user(github_id=id, name=session.pop('username', "Anton"))
+        user, msg, code = userController.get_user(github_id=id)
+        redirect_token = f"?state={session.pop('state')}"
+        if user is None:
+            user, msg, code = userController.create_user(github_id=id, name=session.pop('username', "Anton"))
+        
+        if user is None:
+            redirect_token += f"&msg={msg}&code={code}"
+        else:
             access_token = create_access_token(identity=user)
-        redirect_token = f"?state={session.pop('state')}&token={access_token}"
+            redirect_token += f"&token={access_token}"
+
         return redirect(session.pop('redirect') + redirect_token)
 
