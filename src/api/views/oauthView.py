@@ -81,10 +81,3 @@ def register_callback(blueprint):
         redirect_token = f"?state={session.pop('state')}&token={access_token}"
         return redirect(session.pop('redirect') + redirect_token)
 
-# Actually deprecated
-# should be /user in userview but I'll leave it until Routes branch adds and merges it
-@app.route("/getcurrentuser", methods=["GET"])
-@jwt_required
-def getCurrentUser():
-    current_user = userController.get_user(id=get_jwt_identity())
-    return jsonify(current_user.as_dict()), 200
