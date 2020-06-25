@@ -167,37 +167,23 @@ def get_all_users():
 
     return jsonify(users), 200
 
-@app.route("/users/<id>", methods=['DELETE'])
-def delete_user(id):
+@app.route("/user", methods=['DELETE'])
+@jwt_required
+def delete_user():
     """
     Delete user
-    Deletes user with `id`
+    Deletes authenticated user
     ---
     tags:
         - User
-    parameters:
-        -   in: path
-            name: id
-            type: integer
-            required: true
-            description: Id of the user to delete
     responses:
         200:
             description: User deleted successfully
-        401:
-            description: Not allowed to delete the specified user
         404:
-            description: User not found
+            description: User the token belonged to doesn't exist anymore
     """
-    if int(current_user.id) == int(id):
-        user = userController.delete_user(id)
-
-        if user:
-            return "", 200
-        else:
-            return "", 404
-    else:
-        return "You cannot delete an other user", 401
+    
+    return userController.delete_user(get_jwt_identity())
 
 # User Link
 @app.route("/users/<user_id>/links", methods=['POST'])
