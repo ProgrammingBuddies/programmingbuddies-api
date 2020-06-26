@@ -70,7 +70,8 @@ class UserController:
     def create_link(self, user_id, **kwargs):
         try:
             if 'name' in kwargs and 'url' in kwargs and len(kwargs) == 2:
-
+                if kwargs['name'] is None or kwargs['url'] is None:
+                    return None, "Arguments can't be empty", 400
                 link = UserLink(user_id=user_id, **kwargs)
                 self.session.add(link)
                 self.session.commit()
