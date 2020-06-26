@@ -69,47 +69,60 @@ class UserController:
     # User Link
     def create_link(self, user_id, **kwargs):
         try:
-            link = UserLink(user_id=user_id, **kwargs)
-            self.session.add(link)
-            self.session.commit()
+            if 'name' in kwargs and 'url' in kwargs and len(kwargs) == 2:
 
-            return link
+                link = UserLink(user_id=user_id, **kwargs)
+                self.session.add(link)
+                self.session.commit()
+
+                return link, "OK", 201
+            else:
+                return None, "Forbidden attributes used in request. only name and url allowed.", 400
         except:
             self.session.rollback()
-            return None
+            return None, "link creation failed", 500
 
-    def update_link(self, user_id, link_id, **kwargs):
-        link = UserLink.query.filter_by(user_id=user_id, id=link_id).first()
+    def update_link(self, user_id, **kwargs):
+        if not 'id' in kwargs:
+            return None, "Missing required parameter 'id'", 400
+        print(kwargs['id'])
+        print(user_id)
+        link = UserLink.query.filter_by(user_id=user_id, id=kwargs['id']).first()
 
         if link == None:
-            return None
+            return None, "User doesn't have a link with that id or user doesn't exist", 404
 
         for key, value in kwargs.items():
             if not hasattr(link, key):
-                return None
+                return None, f"Forbidden attribute {key} used", 400
 
         for key, value in kwargs.items():
             setattr(link, key, value)
 
         db.session.commit()
 
-        return link
+        return link, "OK", 200
 
     def get_all_links(self, user_id):
-        all_links = UserLink.query.filter_by(user_id=user_id).all()
+        user = User.query.filter_by(id=user_id).first()
+        if user is None:
+            return None, "User not found", 404
+        
+        return user.links, "OK", 200
 
-        return all_links
+    def delete_link(self, user_id, **kwargs):
+        if not 'id' in kwargs:
+            return None, "Missing required parameter 'id'", 400
 
-    def delete_link(self, user_id, link_id):
-        link = UserLink.query.filter_by(user_id=user_id, id=link_id).first()
+        link = UserLink.query.filter_by(user_id=user_id, id=kwargs['id']).first()
 
         if link == None:
-            return None
+            return None, "Link not found", 404
 
         db.session.delete(link)
         db.session.commit()
 
-        return link
+        return link, "OK", 200
 
     # User Feedback
     def create_feedback(self, user_id, **kwargs):
