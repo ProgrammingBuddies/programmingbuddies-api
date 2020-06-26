@@ -1,148 +1,76 @@
 from flask import request, jsonify, session, Flask, redirect, session, url_for
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from api import app
+from api.utils import wrap_response
 from api.controllers import userController
 from os import environ
 
 # User
-@app.route("/users", methods=['POST'])
-def create_user():
-    """
-    Create user
-    ---
-    tags:
-        - User
-    parameters:
-        -   in: body
-            name: User
-            required: true
-            description: User object containing data for creation
-            schema:
-                $ref: "#/definitions/User"
-    definitions:
-        - schema:
-            id: User
-            properties:
-                id:
-                    type: integer
-                    description: Id of the user. This property will be assigned a value returned by the database
-                name:
-                    type: string
-                    description: Name of the user
-                bio:
-                    type: string
-                    description: Biography of the user
-                languages:
-                    type: string
-                    description: List of programming languages the user uses
-                interests:
-                    type: string
-                    description: Interests of the user
-                location:
-                    type: string
-                    description: Location of the user
-                occupation:
-                    type: string
-                    description: Formal occupation, eg. student at X or works at Y
-                projects:
-                    type: array
-                    description: List of projects
-                    items:
-                        $ref: "#/definitions/Project"
-                links:
-                    type: array
-                    description: List of links
-                    items:
-                        $ref: "#/definitions/UserLink"
-                project_feedbacks:
-                    type: array
-                    description: List of feedbacks given to projects
-                    items:
-                        $ref: "#/definitions/ProjectFeedback"
-                user_feedbacks:
-                    type: array
-                    description: List of feedbacks given to users
-                    items:
-                        $ref: "#/definitions/UserFeedback"
-                received_feedbacks:
-                    type: array
-                    description: List of received feedbacks from users
-                    items:
-                        $ref: "#/definitions/UserFeedback"
-    responses:
-        201:
-            description: User created successfully
-        400:
-            description: Failed to create user
-    """
-    user = userController.create_user(**request.get_json())
-
-    if user == None:
-        return "Failed to create user.", 400
-    else:
-        return jsonify(user.as_dict()), 201
-
-@app.route("/users/<id>", methods=['PUT'])
-def update_user(id):
+@app.route("/user", methods=['PUT'])
+@jwt_required
+def update_user():
     """
     Update user
-    Updates user with `id` using the data in request body
+    Updates authenticated user with the data in request body
     ---
     tags:
         - User
     parameters:
-        -   in: path
-            name: id
-            type: integer
-            required: true
-            description: Id of user to update
         -   in: body
             name: User
             required: true
-            description: User object containing data to update
+            description: User attributes to update. Any combination of attributes is valid
             schema:
-                $ref: "#/definitions/User"
+                id: UserUpdate
+                properties:
+                    name:
+                        type: string
+                        description: (Optional) Name of the user
+                    bio:
+                        type: string
+                        description: (Optional) Biography of the user
+                    languages:
+                        type: string
+                        description: (Optional) List of programming languages the user uses
+                    interests:
+                        type: string
+                        description: (Optional) Interests of the user
+                    location:
+                        type: string
+                        description: (Optional) Location of the user
+                    occupation:
+                        type: string
+                        description: (Optional) Formal occupation, eg. student at X or works at Y
     responses:
         200:
             description: User updated successfully
         400:
-            description: Failed to update user
+            description: Bad Request. Forbidden Parameters used
+        404:
+            description: User the token belonged to doesn't exist anymore
     """
+
     if 'id' in request.get_json():
-        return "Failed to update user. Request body can not specify user's id.", 501
+        return wrap_response(None, "Failed to update user. Request body can not specify user's id.", 400)
 
-    user = userController.update_user(id, **request.get_json())
+    return wrap_response(*userController.update_user(get_jwt_identity(), **request.get_json()))
 
-    if user == None:
-        return "Failed to update user.", 400
-    else:
-        return jsonify(user.as_dict()), 200
-
-@app.route("/users/<id>", methods=['GET'])
-def get_user(id):
+@app.route("/user", methods=['GET'])
+@jwt_required
+def get_user():
     """
     Get user
-    Retreives user with `id`
+    Retreives authenticated user
     ---
     tags:
         - User
-    parameters:
-        -   in: path
-            name: id
-            type: integer
-            required: true
-            description: Id of the user to retrieve
     responses:
         200:
             description: User object
         404:
-            description: User not found
+            description: User the token belonged to doesn't exist anymore
     """
-    user = userController.get_user(id=id)
-
-    if user:
-        return jsonify(user.as_dict()), 200
-    else:
-        return "", 404
+    return wrap_response(*userController.get_user_from_jwt())
 
 @app.route("/users", methods=['GET'])
 def get_all_users():
@@ -162,37 +90,23 @@ def get_all_users():
 
     return jsonify(users), 200
 
-@app.route("/users/<id>", methods=['DELETE'])
-def delete_user(id):
+@app.route("/user", methods=['DELETE'])
+@jwt_required
+def delete_user():
     """
     Delete user
-    Deletes user with `id`
+    Deletes authenticated user
     ---
     tags:
         - User
-    parameters:
-        -   in: path
-            name: id
-            type: integer
-            required: true
-            description: Id of the user to delete
     responses:
         200:
             description: User deleted successfully
-        401:
-            description: Not allowed to delete the specified user
         404:
-            description: User not found
+            description: User the token belonged to doesn't exist anymore
     """
-    if int(current_user.id) == int(id):
-        user = userController.delete_user(id)
-
-        if user:
-            return "", 200
-        else:
-            return "", 404
-    else:
-        return "You cannot delete an other user", 401
+    
+    return wrap_response(*userController.delete_user(get_jwt_identity()))
 
 # User Link
 @app.route("/users/<user_id>/links", methods=['POST'])
