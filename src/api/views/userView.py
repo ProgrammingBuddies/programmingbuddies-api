@@ -109,10 +109,11 @@ def delete_user():
     return wrap_response(*userController.delete_user(get_jwt_identity()))
 
 # User Link
-@app.route("/users/<user_id>/links", methods=['POST'])
-def create_user_link(user_id):
+@app.route("/user/link", methods=['POST'])
+@jwt_required
+def create_user_link():
     """
-    Create user link
+    Create a link for the authenticated user
     ---
     tags:
         - UserLink
@@ -120,139 +121,110 @@ def create_user_link(user_id):
         -   in: body
             name: UserLink
             required: true
-            description: User link object containing data to update
+            description: User link object
             schema:
-                $ref: "#/definitions/UserLink"
-    definitions:
-        - schema:
-            id: UserLink
-            properties:
-                id:
-                    type: integer
-                    description: Id of the user link. This property will be assigned a value returned by the database
-                name:
-                    type: string
-                    description: Name of the user link
-                url:
-                    type: string
-                    description: Url of the user link
-                user_id:
-                    type: integer
-                    description: Id of the user
+                id: UserLinkCreate
+                properties:
+                    name:
+                        type: string
+                        description: Name of the user link
+                    url:
+                        type: string
+                        description: Url of the user link
     responses:
         201:
             description: User link created successfully
         400:
             description: Failed to create user link
+        404:
+            description: User doesnt Exist.
     """
-    if 'user_id' in request.get_json():
-        return "Failed to create user link. Request body can not specify link's user_id.", 400
 
-    link = userController.create_link(user_id, **request.get_json())
+    return wrap_response(*userController.create_link(get_jwt_identity(), **request.get_json()))
 
-    if link == None:
-        return "Failed to create user link.", 400
-    else:
-        return jsonify(link.as_dict()), 201
-
-@app.route("/users/<user_id>/links/<link_id>", methods=['PUT'])
-def update_user_link(user_id, link_id):
+@app.route("/user/link", methods=['PUT'])
+@jwt_required
+def update_user_link():
     """
     Update user link
-    Updates user link with `user_id` and `link_id` using the data in request body
+    Updates one of the authenticated user's links as specified by the link_id
     ---
     tags:
         - UserLink
     parameters:
-        -   in: path
-            name: user_id
-            type: integer
-            required: true
-            description: Id of the user
-        -   in: path
-            name: link_id
-            type: integer
-            required: true
-            description: Id of the user link to update
         -   in: body
             name: UserLink
             required: true
             description: User link object containing data to update
             schema:
-                $ref: "#/definitions/UserLink"
+                id: UserLinkUpdate
+                properties:
+                    id:
+                        type: integer
+                        description: Id of the user link. This property will be assigned a value returned by the database
+                    name:
+                        type: string
+                        description: (optional) Name of the user link
+                    url:
+                        type: string
+                        description: (optional)Url of the user link
     responses:
         200:
             description: User link updated successfully
         400:
             description: Failed to update user link
+        404:
+            description: User or link don't exist
     """
-    if 'user_id' in request.get_json():
-        return "Failed to update user link. Request body can not specify link's user_id.", 400
-    elif 'link_id' in request.get_json():
-        return "Failed to update user link. Request body can not specify link's link_id.", 400
 
-    link = userController.update_link(user_id, link_id, **request.get_json())
+    return wrap_response(*userController.update_link(get_jwt_identity(), **request.get_json()))
 
-    if link == None:
-        return "Failed to update user link.", 400
-    else:
-        return jsonify(link.as_dict()), 200
-
-@app.route("/users/<user_id>/links", methods=['GET'])
-def get_all_user_links(user_id):
+@app.route("/user/links", methods=['GET'])
+@jwt_required
+def get_all_user_links():
     """
     Get all user links
-    Retreives all user links with `user_id`
+    Retreives all links of the authenticated user
     ---
     tags:
         - UserLink
-    parameters:
-        -   in: path
-            name: user_id
-            type: integer
-            required: true
-            description: Id of the user
     responses:
         200:
             description: List of user links
+        404:
+            description: User not found
     """
-    all_links = userController.get_all_links(user_id)
+    all_links, msg, code = userController.get_all_links(get_jwt_identity())
+    links = [link for link in all_links]
+    return wrap_response(links, msg, code)
 
-    links = [ link.as_dict() for link in all_links ]
-
-    return jsonify(links), 200
-
-@app.route("/users/<user_id>/links/<link_id>", methods=['DELETE'])
-def delete_user_link(user_id, link_id):
+@app.route("/user/link", methods=['DELETE'])
+@jwt_required
+def delete_user_link():
     """
     Delete user link
-    Deletes user link with `user_id` and `link_id`
+    Deletes one of the authenticated user's links as specified by the link_id
     ---
     tags:
         - UserLink
     parameters:
-        -   in: path
-            name: user_id
-            type: integer
+        -   in: body
+            name: UserLink
             required: true
-            description: Id of the user
-        -   in: path
-            name: link_id
-            type: integer
-            required: true
-            description: Id of the user link to delete
+            description: User link object containing data to update
+            schema:
+                id: UserLinkdelete
+                properties:
+                    id:
+                        type: integer
+                        description: Id of the user link. This property will be assigned a value returned by the database
     responses:
         200:
             description: User link deleted successfully
         404:
             description: User link not found
     """
-    link = userController.delete_link(user_id, link_id)
-
-    if link == None:
-        return "", 404
-    else:
-        return "", 200
+    return wrap_response(*userController.delete_link(get_jwt_identity(), **request.get_json()))
 
 # User Feedback
 @app.route("/users/<user_id>/feedbacks", methods=['POST'])
