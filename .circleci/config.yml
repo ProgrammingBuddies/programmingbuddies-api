@@ -18,20 +18,22 @@ jobs:
           CONNECT: "mysql+mysqlconnector://PB:secret@localhost:3306/pbapi-db"
           SERVER_HOST: "0.0.0.0"
           SERVER_PORT: "5001"
-      - image: mysql:8.0.20 # an example of how to specify a service container
+          CI_TEST_ENV: true
+      - image: mysql:8.0.20
         environment:
           MYSQL_ROOT_PASSWORD: "secret-root"
           MYSQL_PASSWORD: "secret"
           MYSQL_USER: "PB"
           MYSQL_DATABASE: "pbapi-db"
-    steps: # steps that comprise the `build` job
+    steps:
     - checkout # check out source code to working directory
-    - run:
+    - run: # Install deps
         command: |
             sudo pip install pipenv
             pipenv install
-    - run:
+    - run: # Actualy run tests
         command: |
+            # echo $CI_TEST_ENV
             pipenv run pytest tests/
 
   docker-push:
