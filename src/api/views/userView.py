@@ -1,13 +1,14 @@
 from flask import request, jsonify, session, Flask, redirect, session, url_for
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from api import app
-from api.utils import wrap_response
+from api.utils import wrap_response, body_required
 from api.controllers import userController
 from os import environ
 
 # User
 @app.route("/user", methods=['PUT'])
 @jwt_required
+@body_required
 def update_user():
     """
     Update user
@@ -93,6 +94,7 @@ def delete_user():
 # User Link
 @app.route("/user/link", methods=['POST'])
 @jwt_required
+@body_required
 def create_user_link():
     """
     Create a link for the authenticated user
@@ -126,6 +128,7 @@ def create_user_link():
 
 @app.route("/user/link", methods=['PUT'])
 @jwt_required
+@body_required
 def update_user_link():
     """
     Update user link
@@ -182,6 +185,7 @@ def get_all_user_links():
 
 @app.route("/user/link", methods=['DELETE'])
 @jwt_required
+@body_required
 def delete_user_link():
     """
     Delete user link
