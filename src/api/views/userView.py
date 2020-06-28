@@ -273,8 +273,10 @@ def get_all_user_feedbacks():
 
     return wrap_response(feedbacks, msg, code)
 
-@app.route("/users/<user_id>/feedbacks/<feedback_id>", methods=['DELETE'])
-def delete_user_feedback(user_id, feedback_id):
+@app.route("/user/feedback", methods=['DELETE'])
+@jwt_required
+@body_required
+def delete_user_feedback():
     """
     Delete user feedback
     Deletes user feedback with `user_id` and `feedback_id`
@@ -298,9 +300,4 @@ def delete_user_feedback(user_id, feedback_id):
         404:
             description: User feedback not found
     """
-    feedback = userController.delete_feedback(user_id, feedback_id)
-
-    if feedback == None:
-        return "", 404
-    else:
-        return "", 200
+    return wrap_response(*userController.delete_feedback(get_jwt_identity(), **request.get_json()))

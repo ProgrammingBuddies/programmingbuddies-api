@@ -195,22 +195,24 @@ class TestUserView(object):
         assert [r_json[0]["user_id"], r_json[0]["author_id"]] == [user2.id, user1.id]
 
     def test_delete_user_feedback(self, client):
-        user1 = create_user_for_test_cases(self.valid_data)
+        token1, user1 = create_access_token_for_test_cases(self.valid_data)
 
         self.valid_data["name"] = "delete user2"
-        user2 = create_user_for_test_cases(self.valid_data)
+        token2, user2 = create_access_token_for_test_cases(self.valid_data)
 
-        fb1 = create_user_feedback_for_test_cases(user1, user2)
-        fb2 = create_user_feedback_for_test_cases(user1, user2)
+        fb1 = create_user_feedback_for_test_cases(user1.as_dict(), user2.as_dict())
+        fb2 = create_user_feedback_for_test_cases(user1.as_dict(), user2.as_dict())
 
-        url = "/users/{0}/feedbacks/{1}"
+        url = "/user/feedback"
 
-        response = client.delete(url.format(user1["id"], 0))
+        response = client.delete(url, headers={"Authorization": f"Bearer {token1}"}, json={'id': 1337})
         assert response.status_code == 404
 
-        response = client.delete(url.format(0, fb1["id"]))
-        assert response.status_code == 404
 
-        response = client.delete(url.format(user2["id"], fb1["id"]))
+        response = client.delete(url, headers={"Authorization": f"Bearer {token1}"}, json={"id": fb1['id']})
         assert response.status_code == 200
-        assert UserFeedback.query.filter_by(user_id=user2["id"]).count() == 1
+
+        response = client.delete(url, headers={"Authorization": f"Bearer {token1}"}, json={})
+        assert response.status_code == 400
+
+        assert UserFeedback.query.filter_by(user_id=user2.id).count() == 1
