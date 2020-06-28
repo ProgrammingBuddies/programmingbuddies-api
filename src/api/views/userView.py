@@ -72,24 +72,6 @@ def get_user():
     """
     return wrap_response(*userController.get_user_from_jwt())
 
-@app.route("/users", methods=['GET'])
-def get_all_users():
-    """
-    Get all users
-    Retreives all users
-    ---
-    tags:
-        - User
-    responses:
-        200:
-            description: List of users
-    """
-    all_users = userController.get_all_users()
-
-    users = [ user.as_dict() for user in all_users ]
-
-    return jsonify(users), 200
-
 @app.route("/user", methods=['DELETE'])
 @jwt_required
 def delete_user():
