@@ -1,4 +1,5 @@
 from flask import jsonify, request
+from functools import wraps
 
 def wrap_response(data, msg, code):
     obj = {"msg": msg}
@@ -10,6 +11,7 @@ def wrap_response(data, msg, code):
     return jsonify(obj), code
 
 def body_required(fn):
+    @wraps(fn)
     def wrapper(*args, **kwargs):
         if request.get_json() is None:
             return wrap_response(None, "Body Required", 400)
