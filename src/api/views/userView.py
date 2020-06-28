@@ -284,16 +284,15 @@ def delete_user_feedback():
     tags:
         - UserFeedback
     parameters:
-        -   in: path
-            name: user_id
-            type: integer
+        -   in: body
+            name: UserFeedbackGet
             required: true
-            description: Id of the user
-        -   in: path
-            name: feedback_id
-            type: integer
-            required: true
-            description: Id of the user feedback to delete
+            description: User feedback object containing data to update
+            schema:
+                properties:
+                    id:
+                        type: integer
+                        description: id of the user
     responses:
         200:
             description: User feedback deleted successfully
