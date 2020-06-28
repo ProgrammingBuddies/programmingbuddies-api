@@ -165,30 +165,30 @@ class TestUserView(object):
         assert response.status_code == 201
 
     def test_get_all_user_feedbacks(self, client):
-        user1 = create_user_for_test_cases(self.valid_data)
+        token1, user1 = create_access_token_for_test_cases(self.valid_data)
 
         self.valid_data["name"] = "new user2"
-        user2 = create_user_for_test_cases(self.valid_data)
+        token2, user2 = create_access_token_for_test_cases(self.valid_data)
 
         self.valid_data["name"] = "new user3"
-        user3 = create_user_for_test_cases(self.valid_data)
+        token3, user3 = create_access_token_for_test_cases(self.valid_data)
 
-        create_user_feedback_for_test_cases(user1, user2)
-        create_user_feedback_for_test_cases(user3, user1)
-        create_user_feedback_for_test_cases(user2, user1)
+        create_user_feedback_for_test_cases(user1.as_dict(), user2.as_dict())
+        create_user_feedback_for_test_cases(user3.as_dict(), user1.as_dict())
+        create_user_feedback_for_test_cases(user2.as_dict(), user1.as_dict())
 
-        url = "/users/{}/feedbacks"
+        url = "/user/feedbacks"
 
-        response = client.get(url.format(user1["id"]))
-        r_json = response.get_json()
+        response = client.get(url, json={"id": user1.id})
+        r_json = response.get_json()['data']
         assert len(r_json) == 2
         assert [r_json[0]["user_id"], r_json[0]["author_id"], r_json[1]["user_id"], r_json[1]["author_id"]] == \
-               [user1["id"], user3["id"], user1["id"], user2["id"]]
+               [user1.id, user3.id, user1.id, user2.id]
 
-        response = client.get(url.format(user2["id"]))
-        r_json = response.get_json()
+        response = client.get(url, json={"id": user2.id})
+        r_json = response.get_json()['data']
         assert len(r_json) == 1
-        assert [r_json[0]["user_id"], r_json[0]["author_id"]] == [user2["id"], user1["id"]]
+        assert [r_json[0]["user_id"], r_json[0]["author_id"]] == [user2.id, user1.id]
 
     def test_delete_user_feedback(self, client):
         user1 = create_user_for_test_cases(self.valid_data)

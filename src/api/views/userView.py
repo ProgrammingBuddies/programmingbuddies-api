@@ -262,29 +262,34 @@ def create_user_feedback(user_id):
     else:
         return jsonify(feedback.as_dict()), 201
 
-@app.route("/users/<user_id>/feedbacks", methods=['GET'])
-def get_all_user_feedbacks(user_id):
+@app.route("/user/feedbacks", methods=['GET'])
+@body_required
+def get_all_user_feedbacks():
     """
     Get all user feedbacks
-    Retreives all user feedbacks with `user_id`
+    Retreives all of the specified user's feedbacks
     ---
+    parameters:
+        -   in: body
+            name: UserFeedbackGet
+            required: true
+            description: User feedback object containing data to update
+            schema:
+                properties:
+                    id:
+                        type: integer
+                        description: id of the user
     tags:
         - UserFeedback
-    parameters:
-        -   in: path
-            name: user_id
-            type: integer
-            required: true
-            description: Id of the user
     responses:
         200:
             description: List of user feedbacks
     """
-    all_feedbacks = userController.get_all_feedbacks(user_id)
+    all_feedbacks, msg, code = userController.get_all_feedbacks(**request.get_json())
 
-    feedbacks = [ feedback.as_dict() for feedback in all_feedbacks ]
+    feedbacks = [ feedback for feedback in all_feedbacks ]
 
-    return jsonify(feedbacks), 200
+    return wrap_response(feedbacks, msg, code)
 
 @app.route("/users/<user_id>/feedbacks/<feedback_id>", methods=['DELETE'])
 def delete_user_feedback(user_id, feedback_id):
