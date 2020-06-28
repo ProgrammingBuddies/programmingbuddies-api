@@ -127,31 +127,48 @@ class UserController:
 
     # User Feedback
     def create_feedback(self, user_id, **kwargs):
-        try:
-            feedback = UserFeedback(user_id=user_id, **kwargs)
-            self.session.add(feedback)
-            self.session.commit()
+        author = User.query.filter_by(id=user_id).first()
+        if author is None:
+            return None, "Author not found", 404
 
-            return feedback
-        except:
-            self.session.rollback()
-            return None
+        if not 'id' in kwargs or not 'rating' in kwargs:
+            return None, "Missing required argument", 400
 
-    def get_all_feedbacks(self, user_id):
-        all_feedbacks = UserFeedback.query.filter_by(user_id=user_id).all()
+        user = User.query.filter_by(id=kwargs['id']).first()
+        if user is None:
+            return None, "User not found", 404
+        feedback = UserFeedback(author_id=author.id, user_id=kwargs.pop('id'), **kwargs)
+        self.session.add(feedback)
+        self.session.commit()
 
-        return all_feedbacks
+        return feedback, "OK", 201
 
-    def delete_feedback(self, user_id, feedback_id):
-        feedback = UserFeedback.query.filter_by(user_id=user_id, id=feedback_id).first()
+    def get_all_feedbacks(self, **kwargs):
+        if not 'id' in kwargs:
+            return None, "id Required", 400
+        user = User.query.filter_by(id=kwargs['id']).first()
+        if user is None:
+            return None, "User not found", 404
+
+
+        return user.received_feedbacks, "OK", 200
+
+    def delete_feedback(self, user_id, **kwargs):
+        user = User.query.filter_by(id=user_id).first()
+        if user == None:
+            return None, "User not found", 404
+
+        if not 'id' in kwargs:
+            return None, "id Required", 400
+        feedback = UserFeedback.query.filter_by(author_id=user_id, id=kwargs['id']).first()
 
         if feedback == None:
-            return None
+            return None, "feedback not found", 404
 
         db.session.delete(feedback)
         db.session.commit()
 
-        return feedback
+        return feedback, "OK", 200
 
     def get_user_from_jwt(self):
         return self.get_user(id=get_jwt_identity())
