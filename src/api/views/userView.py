@@ -213,8 +213,10 @@ def delete_user_link():
     return wrap_response(*userController.delete_link(get_jwt_identity(), **request.get_json()))
 
 # User Feedback
-@app.route("/users/<user_id>/feedbacks", methods=['POST'])
-def create_user_feedback(user_id):
+@app.route("/user/feedback", methods=['POST'])
+@jwt_required
+@body_required
+def create_user_feedback():
     """
     Create user feedback
     ---
@@ -226,41 +228,21 @@ def create_user_feedback(user_id):
             required: true
             description: User feedback object containing data to update
             schema:
-                $ref: "#/definitions/UserFeedback"
-    definitions:
-        - schema:
-            id: UserFeedback
-            properties:
-                id:
-                    type: integer
-                    description: Id of the user feedback. This property will be assigned a value returned by the database
-                author_id:
-                    type: integer
-                    description: Id of the author
-                user_id:
-                    type: integer
-                    description: Id of the user
-                rating:
-                    type: string
-                    description: The rating of the user feedback
-                description:
-                    type: string
-                    description: The body of the user feedback
+                properties:
+                    id:
+                        description: Id of the user this feedback is meant for
+                    rating:
+                        description: Rating of the feedback
+                    description:
+                        description: Comment of the feedback
     responses:
         201:
             description: User feedback created successfully
         400:
             description: Failed to create user feedback
     """
-    if 'user_id' in request.get_json():
-        return "Failed to create feedback. Request body can not specify feedback's user_id.", 400
 
-    feedback = userController.create_feedback(user_id, **request.get_json())
-
-    if feedback == None:
-        return "Failed to create feedback.", 400
-    else:
-        return jsonify(feedback.as_dict()), 201
+    return wrap_response(*userController.create_feedback(get_jwt_identity(), **request.get_json()))
 
 @app.route("/user/feedbacks", methods=['GET'])
 @body_required

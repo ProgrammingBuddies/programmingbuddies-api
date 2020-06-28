@@ -146,23 +146,27 @@ class TestUserView(object):
         assert link1 not in recorded_links
 
     def test_create_user_feedback(self, client):
-        user1 = create_user_for_test_cases(self.valid_data)
+        token1, user1 = create_access_token_for_test_cases(self.valid_data)
 
         self.valid_data["name"] = "Other name"
-        user2 = create_user_for_test_cases(self.valid_data)
+        token2, user2 = create_access_token_for_test_cases(self.valid_data)
 
-        url = '/users/{}/feedbacks'.format(user2["id"])
-        response = client.post(url, json={"user_id": user2["id"]})
+        url = '/user/feedback'
+        response = client.post(url, headers={"Authorization": f"Bearer {token1}"}, json={"id": user2.id})
         assert response.status_code == 400
 
         feedback = {
-            "author_id": int(user1["id"]),
+            "id": int(user1.id),
             "rating": 5,
             "description": "Cool guy!",
         }
 
-        response = client.post(url, json=feedback)
+        response = client.post(url, headers={"Authorization": f"Bearer {token1}"}, json=feedback)
         assert response.status_code == 201
+
+        feedback.pop('id')
+        response = client.post(url, headers={"Authorization": f"Bearer {token1}"}, json=feedback)
+        assert response.status_code == 400
 
     def test_get_all_user_feedbacks(self, client):
         token1, user1 = create_access_token_for_test_cases(self.valid_data)
