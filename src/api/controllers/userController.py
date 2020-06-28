@@ -69,75 +69,106 @@ class UserController:
     # User Link
     def create_link(self, user_id, **kwargs):
         try:
-            link = UserLink(user_id=user_id, **kwargs)
-            self.session.add(link)
-            self.session.commit()
+            if 'name' in kwargs and 'url' in kwargs and len(kwargs) == 2:
+                if kwargs['name'] is None or kwargs['url'] is None:
+                    return None, "Arguments can't be empty", 400
+                link = UserLink(user_id=user_id, **kwargs)
+                self.session.add(link)
+                self.session.commit()
 
-            return link
+                return link, "OK", 201
+            else:
+                return None, "Forbidden attributes used in request. only name and url allowed.", 400
         except:
             self.session.rollback()
-            return None
+            return None, "link creation failed", 500
 
-    def update_link(self, user_id, link_id, **kwargs):
-        link = UserLink.query.filter_by(user_id=user_id, id=link_id).first()
+    def update_link(self, user_id, **kwargs):
+        if not 'id' in kwargs:
+            return None, "Missing required parameter 'id'", 400
+        print(kwargs['id'])
+        print(user_id)
+        link = UserLink.query.filter_by(user_id=user_id, id=kwargs['id']).first()
 
         if link == None:
-            return None
+            return None, "User doesn't have a link with that id or user doesn't exist", 404
 
         for key, value in kwargs.items():
             if not hasattr(link, key):
-                return None
+                return None, f"Forbidden attribute {key} used", 400
 
         for key, value in kwargs.items():
             setattr(link, key, value)
 
         db.session.commit()
 
-        return link
+        return link, "OK", 200
 
     def get_all_links(self, user_id):
-        all_links = UserLink.query.filter_by(user_id=user_id).all()
+        user = User.query.filter_by(id=user_id).first()
+        if user is None:
+            return None, "User not found", 404
+        
+        return user.links, "OK", 200
 
-        return all_links
+    def delete_link(self, user_id, **kwargs):
+        if not 'id' in kwargs:
+            return None, "Missing required parameter 'id'", 400
 
-    def delete_link(self, user_id, link_id):
-        link = UserLink.query.filter_by(user_id=user_id, id=link_id).first()
+        link = UserLink.query.filter_by(user_id=user_id, id=kwargs['id']).first()
 
         if link == None:
-            return None
+            return None, "Link not found", 404
 
         db.session.delete(link)
         db.session.commit()
 
-        return link
+        return link, "OK", 200
 
     # User Feedback
     def create_feedback(self, user_id, **kwargs):
-        try:
-            feedback = UserFeedback(user_id=user_id, **kwargs)
-            self.session.add(feedback)
-            self.session.commit()
+        author = User.query.filter_by(id=user_id).first()
+        if author is None:
+            return None, "Author not found", 404
 
-            return feedback
-        except:
-            self.session.rollback()
-            return None
+        if not 'id' in kwargs or not 'rating' in kwargs:
+            return None, "Missing required argument", 400
 
-    def get_all_feedbacks(self, user_id):
-        all_feedbacks = UserFeedback.query.filter_by(user_id=user_id).all()
+        user = User.query.filter_by(id=kwargs['id']).first()
+        if user is None:
+            return None, "User not found", 404
+        feedback = UserFeedback(author_id=author.id, user_id=kwargs.pop('id'), **kwargs)
+        self.session.add(feedback)
+        self.session.commit()
 
-        return all_feedbacks
+        return feedback, "OK", 201
 
-    def delete_feedback(self, user_id, feedback_id):
-        feedback = UserFeedback.query.filter_by(user_id=user_id, id=feedback_id).first()
+    def get_all_feedbacks(self, **kwargs):
+        if not 'id' in kwargs:
+            return None, "id Required", 400
+        user = User.query.filter_by(id=kwargs['id']).first()
+        if user is None:
+            return None, "User not found", 404
+
+
+        return user.received_feedbacks, "OK", 200
+
+    def delete_feedback(self, user_id, **kwargs):
+        user = User.query.filter_by(id=user_id).first()
+        if user == None:
+            return None, "User not found", 404
+
+        if not 'id' in kwargs:
+            return None, "id Required", 400
+        feedback = UserFeedback.query.filter_by(author_id=user_id, id=kwargs['id']).first()
 
         if feedback == None:
-            return None
+            return None, "feedback not found", 404
 
         db.session.delete(feedback)
         db.session.commit()
 
-        return feedback
+        return feedback, "OK", 200
 
     def get_user_from_jwt(self):
         return self.get_user(id=get_jwt_identity())
