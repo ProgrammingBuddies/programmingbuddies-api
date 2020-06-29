@@ -1,9 +1,13 @@
 from flask import request, jsonify
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from api import app
+from api.utils import wrap_response, body_required
 from api.controllers import projectController
 
 # Project
-@app.route("/projects", methods=['POST'])
+@app.route("/project", methods=['POST'])
+@jwt_required
+@body_required
 def create_project():
     """
     Create project
@@ -65,13 +69,10 @@ def create_project():
             description: Project created successfully
         400:
             description: Failed to create project
+        404:
+            description: User doesn't exist
     """
-    project = projectController.create_project(**request.get_json())
-
-    if project == None:
-        return "Failed to create project.", 400
-    else:
-        return jsonify(project.as_dict()), 201
+    return wrap_response(*projectController.create_project(get_jwt_identity(), **request.get_json()))
 
 @app.route("/projects/<id>", methods=['PUT'])
 def update_project(id):

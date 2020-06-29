@@ -1,18 +1,28 @@
-from api.models import db, Project, UserHasProject, ProjectLink, ProjectFeedback
+from api.models import db, User, Project, UserHasProject, ProjectLink, ProjectFeedback
 
 class ProjectController:
-    session = db.session()
+    session = db.session
 
     # Project
-    def create_project(self, **kwargs):
+    def create_project(self, user_id, **kwargs):
         try:
+            user = User.query.filter_by(id=user_id).first()
+
+            if user == None:
+                return None, "User not found", 404
+
             project = Project(**kwargs)
-            self.session.add(project)
+
+            userHasProject = UserHasProject(role=1)
+            userHasProject.project = project
+            userHasProject.user = user
+
+            self.session.add(userHasProject)
             self.session.commit()
 
-            return project
+            return project, "OK", 201
         except:
-            return None
+            return None, "Project creation failed", 400
 
     def update_project(self, id, **kwargs):
         project = Project.query.filter_by(id=id).first()
