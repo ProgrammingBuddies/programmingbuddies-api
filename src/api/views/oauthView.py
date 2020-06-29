@@ -16,6 +16,9 @@ github_blueprint = make_github_blueprint(
 app.register_blueprint(github_blueprint, url_prefix="/login")
 
 app.config['JWT_SECRET_KEY'] = environ.get("JWT_SECRET_KEY")
+# JWT token expiration time in seconds - default is 15 minutes
+if environ.get("JWT_ACCESS_TOKEN_EXPIRES"):
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = environ.get("JWT_ACCESS_TOKEN_EXPIRES")
 jwt = JWTManager(app)
 
 @jwt.user_identity_loader
@@ -80,7 +83,7 @@ def register_callback(blueprint):
         redirect_token = f"?state={session.pop('state')}"
         if user is None:
             user, msg, code = userController.create_user(github_id=id, name=session.pop('username', "Anton"))
-        
+
         if user is None:
             redirect_token += f"&msg={msg}&code={code}"
         else:
