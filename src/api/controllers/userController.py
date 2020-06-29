@@ -4,7 +4,7 @@ from flask_jwt_extended import get_jwt_identity
 from flask import jsonify
 
 class UserController:
-    session = db.session()
+    session = db.session
 
     # User
     def create_user(self, **kwargs):
