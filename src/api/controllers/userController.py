@@ -108,7 +108,7 @@ class UserController:
         user = User.query.filter_by(id=user_id).first()
         if user is None:
             return None, "User not found", 404
-        
+
         return user.links, "OK", 200
 
     def delete_link(self, user_id, **kwargs):

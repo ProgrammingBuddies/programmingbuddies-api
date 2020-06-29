@@ -88,7 +88,7 @@ def delete_user():
         404:
             description: User the token belonged to doesn't exist anymore
     """
-    
+
     return wrap_response(*userController.delete_user(get_jwt_identity()))
 
 # User Link
