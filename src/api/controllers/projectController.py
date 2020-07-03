@@ -23,6 +23,7 @@ class ProjectController:
 
             return project, "OK", 201
         except:
+            self.session.rollback()
             return None, "Project creation failed", 400
 
     def update_project(self, user_id, **kwargs):
