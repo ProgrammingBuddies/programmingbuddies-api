@@ -1,6 +1,7 @@
 from api.models import db, User, Project, UserHasProject, ProjectLink, ProjectFeedback
 
 class ProjectController:
+    # TODO: remove this (also from userController)?
     session = db.session
 
     # Project
@@ -66,24 +67,38 @@ class ProjectController:
 
         return all_projects, "OK", 200
 
-    def delete_project(self, id):
+    def delete_project(self, user_id, **kwargs):
+        if len(kwargs) != 1:
+            return None, "Failed to update project. Request body must contain only project's id.", 400
+
+        if 'id' not in kwargs:
+            return None, "Failed to update project. Request body must specify project's id.", 400
+
+        project_id = kwargs["id"]
+
+        userHasProject = UserHasProject.query.filter_by(user_id=user_id, project_id=project_id).first()
+        # TODO: verify that the user owns the project (or has neccessary rights)
+        if not userHasProject:
+            return None, "Failed to update project. Current user does not belong to specified project, or the project does not exist.", 404
+
         # Remove all project's links
-        for link in ProjectLink.query.filter_by(project_id=id).all():
+        for link in ProjectLink.query.filter_by(project_id=project_id).all():
             db.session.delete(link)
 
         # Remove project from all users
-        for project in UserHasProject.query.filter_by(project_id=id).all():
+        for project in UserHasProject.query.filter_by(project_id=project_id).all():
             db.session.delete(project)
 
-        project = Project.query.filter_by(id=id).first()
+        project = Project.query.filter_by(id=project_id).first()
 
         if project == None:
-            return project
+            # TODO: db.session.rollback?
+            return None, "Project not found", 404
 
         db.session.delete(project)
         db.session.commit()
 
-        return project
+        return project, "OK", 200
 
     # Project Link
     def create_link(self, project_id, **kwargs):

@@ -138,16 +138,18 @@ def get_all_projects():
     """
     return wrap_response(*projectController.get_all_projects())
 
-@app.route("/projects/<id>", methods=['DELETE'])
-def delete_project(id):
+@app.route("/project", methods=['DELETE'])
+@jwt_required
+@body_required
+def delete_project():
     """
     Delete project
-    Deletes project with `id`
+    Deletes current user's project with the id in request body
     ---
     tags:
         - Project
     parameters:
-        -   in: path
+        -   in: body
             name: id
             type: integer
             required: true
@@ -156,14 +158,11 @@ def delete_project(id):
         200:
             description: Project deleted successfully
         400:
-            description: Project not found
+            description: Failed to delete project
+        404:
+            description: Current user is not a member of requested project or the project was not found
     """
-    project = projectController.delete_project(id)
-
-    if project:
-        return "", 202
-    else:
-        return "", 404
+    return wrap_response(*projectController.delete_project(user_id=get_jwt_identity(), **request.get_json()))
 
 # Project Link
 @app.route("/projects/<project_id>/links", methods=['POST'])
