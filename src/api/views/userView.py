@@ -1,9 +1,9 @@
-from flask import request, jsonify, session, Flask, redirect, session, url_for
-from flask_jwt_extended import get_jwt_identity, jwt_required
 from api import app
-from api.utils import wrap_response, body_required
 from api.controllers import userController
-from os import environ
+from api.utils import wrap_response, body_required
+from flask import request
+from flask_jwt_extended import get_jwt_identity, jwt_required
+
 
 # User
 @app.route("/user", methods=['PUT'])
@@ -88,7 +88,7 @@ def delete_user():
         404:
             description: User the token belonged to doesn't exist anymore
     """
-    
+
     return wrap_response(*userController.delete_user(get_jwt_identity()))
 
 # User Link
@@ -124,7 +124,7 @@ def create_user_link():
             description: User doesnt Exist.
     """
 
-    return wrap_response(*userController.create_link(get_jwt_identity(), **request.get_json()))
+    return wrap_response(*userController.create_link(get_jwt_identity(), request))
 
 @app.route("/user/link", methods=['PUT'])
 @jwt_required

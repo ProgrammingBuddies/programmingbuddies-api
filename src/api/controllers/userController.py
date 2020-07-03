@@ -1,7 +1,7 @@
 from api.models import db, User, UserHasProject, UserLink, UserFeedback
-from api import app
+from api.validation.UserValidation import UserLinkCreateValidation
 from flask_jwt_extended import get_jwt_identity
-from flask import jsonify
+
 
 class UserController:
     session = db.session()
@@ -27,6 +27,10 @@ class UserController:
         for key, value in kwargs.items():
             if not hasattr(user, key):
                 return None, "forbidden attribute", 400
+            else:
+                col = getattr(User, key)
+                if col.prop.expression.readonly:
+                    return None, "forbidden attribute", 400
 
         for key, value in kwargs.items():
             setattr(user, key, value)
@@ -66,20 +70,39 @@ class UserController:
         db.session.commit()
 
         return user, "OK", 200
-    # User Link
-    def create_link(self, user_id, **kwargs):
-        try:
-            if 'name' in kwargs and 'url' in kwargs and len(kwargs) == 2:
-                if kwargs['name'] is None or kwargs['url'] is None:
-                    return None, "Arguments can't be empty", 400
-                link = UserLink(user_id=user_id, **kwargs)
-                self.session.add(link)
-                self.session.commit()
 
-                return link, "OK", 201
-            else:
-                return None, "Forbidden attributes used in request. only name and url allowed.", 400
-        except:
+    # User Link
+    def create_link(self, user_id, req):
+        try:
+            # if 'name' in kwargs and 'url' in kwargs and len(kwargs) == 2:
+            #
+            #     if kwargs['name'] is None or kwargs['url'] is None:
+            #         return None, "Arguments can't be empty", 400
+            #     link = UserLink(user_id=user_id, **kwargs)
+            #     self.session.add(link)
+            #     self.session.commit()
+            #
+            #     return link, "OK", 201
+            # else:
+            #     return None, "Forbidden attributes used in request. only name and url allowed.", 400
+
+            inputs = UserLinkCreateValidation(req)
+            try:
+                if not inputs.validate():
+                    return None, inputs.errors, 400
+            except TypeError:
+                return None, "Not correct json format", 400
+
+            try:
+                link = UserLink(user_id=user_id, **req.get_json())
+            except TypeError:
+                return None, "More json parameters where given than expected", 400
+            self.session.add(link)
+            self.session.commit()
+
+            return link, "OK", 201
+        except Exception as e:
+            print(type(e))
             self.session.rollback()
             return None, "link creation failed", 500
 
@@ -108,7 +131,7 @@ class UserController:
         user = User.query.filter_by(id=user_id).first()
         if user is None:
             return None, "User not found", 404
-        
+
         return user.links, "OK", 200
 
     def delete_link(self, user_id, **kwargs):
@@ -150,7 +173,6 @@ class UserController:
         if user is None:
             return None, "User not found", 404
 
-
         return user.received_feedbacks, "OK", 200
 
     def delete_feedback(self, user_id, **kwargs):
@@ -172,5 +194,6 @@ class UserController:
 
     def get_user_from_jwt(self):
         return self.get_user(id=get_jwt_identity())
+
 
 userController = UserController()
