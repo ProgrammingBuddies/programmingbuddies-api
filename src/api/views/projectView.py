@@ -100,6 +100,9 @@ def update_project():
         404:
             description: Current user or requested project not found
     """
+    if "user_id" in request.get_json():
+        return wrap_response(None, "Failed to update project. Request body must not contain 'user_id'.", 400)
+
     return wrap_response(*projectController.update_project(user_id=get_jwt_identity(), **request.get_json()))
 
 @app.route("/projects/<id>", methods=['GET'])
@@ -162,6 +165,9 @@ def delete_project():
         404:
             description: Current user is not a member of requested project or the project was not found
     """
+    if "user_id" in request.get_json():
+        return wrap_response(None, "Failed to delete project. Request body must not contain 'user_id'.", 400)
+
     return wrap_response(*projectController.delete_project(user_id=get_jwt_identity(), **request.get_json()))
 
 # Project Link

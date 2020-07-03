@@ -69,17 +69,17 @@ class ProjectController:
 
     def delete_project(self, user_id, **kwargs):
         if len(kwargs) != 1:
-            return None, "Failed to update project. Request body must contain only project's id.", 400
+            return None, "Failed to delete project. Request body must contain only project's id.", 400
 
         if 'id' not in kwargs:
-            return None, "Failed to update project. Request body must specify project's id.", 400
+            return None, "Failed to delete project. Request body must specify project's id.", 400
 
         project_id = kwargs["id"]
 
         userHasProject = UserHasProject.query.filter_by(user_id=user_id, project_id=project_id).first()
         # TODO: verify that the user owns the project (or has neccessary rights)
         if not userHasProject:
-            return None, "Failed to update project. Current user does not belong to specified project, or the project does not exist.", 404
+            return None, "Failed to delete project. Current user does not belong to specified project, or the project does not exist.", 404
 
         # Remove all project's links
         for link in ProjectLink.query.filter_by(project_id=project_id).all():
