@@ -1,6 +1,6 @@
 from tests.conftest import client
 from tests import db, Project, ProjectLink
-from tests.api import create_project_for_test_cases, create_project_link_for_test_cases, create_access_token_for_test_cases
+from tests.api import create_project_for_test_cases, create_project_link_for_test_cases, create_access_token_for_test_cases, user_join_project_for_test_cases
 
 class TestProjectView(object):
 
@@ -51,18 +51,20 @@ class TestProjectView(object):
         assert project.description == 'updated desc'
 
     def test_delete_project(self, client):
-        token, _ = create_access_token_for_test_cases(self.valid_user_data)
+        token, user = create_access_token_for_test_cases(self.valid_user_data)
 
         response = client.delete('/project', headers={"Authorization": f"Bearer {token}"}, json={"id": 0})
         assert response.status_code == 404
 
         project1 = create_project_for_test_cases(self.valid_project_data)
+        user_join_project_for_test_cases(user, project1)
 
         self.valid_project_data["name"] = "p2 name"
         project2 = create_project_for_test_cases(self.valid_project_data)
+        user_join_project_for_test_cases(user, project2)
 
         response = client.delete('/project', headers={"Authorization": f"Bearer {token}"}, json={"id": project1["id"]})
-        assert response.status_code == 202
+        assert response.status_code == 200
 
     def test_get_project(self, client):
         response = client.get('/projects/{}'.format(0))
