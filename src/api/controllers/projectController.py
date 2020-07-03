@@ -56,12 +56,15 @@ class ProjectController:
     def get_project(self, **kwargs):
         project = Project.query.filter_by(**kwargs).first()
 
-        return project
+        if project:
+            return project, "OK", 200
+        else:
+            return None, "Project not found", 404
 
     def get_all_projects(self, **kwargs):
         all_projects = Project.query.all()
 
-        return all_projects
+        return all_projects, "OK", 200
 
     def delete_project(self, id):
         # Remove all project's links

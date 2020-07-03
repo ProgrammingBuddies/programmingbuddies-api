@@ -122,12 +122,7 @@ def get_project(id):
         404:
             description: Project not found
     """
-    project = projectController.get_project(id=id)
-
-    if project:
-        return jsonify(project.as_dict()), 200
-    else:
-        return "", 404
+    return wrap_response(*projectController.get_project(id=id))
 
 @app.route("/projects", methods=['GET'])
 def get_all_projects():
@@ -141,11 +136,7 @@ def get_all_projects():
         200:
             description: List of projects
     """
-    all_projects = projectController.get_all_projects()
-
-    projects = [ project.as_dict() for project in all_projects ]
-
-    return jsonify(projects), 200
+    return wrap_response(*projectController.get_all_projects())
 
 @app.route("/projects/<id>", methods=['DELETE'])
 def delete_project(id):
