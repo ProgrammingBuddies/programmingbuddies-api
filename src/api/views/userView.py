@@ -152,7 +152,7 @@ def update_user_link():
                         description: (optional) Name of the user link
                     url:
                         type: string
-                        description: (optional)Url of the user link
+                        description: (optional) Url of the user link
     responses:
         200:
             description: User link updated successfully
