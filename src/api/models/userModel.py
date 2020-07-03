@@ -1,18 +1,17 @@
 from api.models import db
 
-from api.models.userHasProjectModel import UserHasProject
-from api.models.userLinkModel import UserLink
-from api.models.projectFeedbackModel import ProjectFeedback
+from api.models.column import Column
+
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    github_id = db.Column(db.Integer)
-    name = db.Column(db.String(80), nullable=False)
-    bio = db.Column(db.Text)
-    languages = db.Column(db.Text)
-    interests = db.Column(db.Text)
-    location = db.Column(db.String(80))
-    occupation = db.Column(db.String(80))
+    id = Column(db.Integer, primary_key=True, readonly=True)
+    github_id = Column(db.Integer, readonly=True)
+    name = Column(db.String(80), nullable=False)
+    bio = Column(db.Text)
+    languages = Column(db.Text)
+    interests = Column(db.Text)
+    location = Column(db.String(80))
+    occupation = Column(db.String(80))
     projects = db.relationship('UserHasProject', back_populates='user')
     links = db.relationship('UserLink', backref='user', lazy=True)
     project_feedbacks = db.relationship('ProjectFeedback', backref='project_feed_author')
