@@ -24,35 +24,34 @@ class ProjectController:
         except:
             return None, "Project creation failed", 400
 
-    def update_project(self, id, **kwargs):
-        project = Project.query.filter_by(id=id).first()
+    def update_project(self, user_id, **kwargs):
+        if 'user_id' in kwargs:
+            return None, "Failed to update project. Request body can not specify user's id.", 400
+
+        if 'id' not in kwargs:
+            return None, "Failed to update project. Request body must specify project's id.", 400
+
+        user = User.query.filter_by(id=user_id).first()
+
+        if user == None:
+            return None, "User not found", 404
+
+        project = Project.query.filter_by(id=kwargs["id"]).first()
 
         if project == None:
-            return None
+            return None, "Project not found", 404
 
+        # Note that we are updating the id too, but to the same id because we used it to query the user with it
         for key, value in kwargs.items():
             if not hasattr(project, key):
-                return None
+                return None, f"Forbidden attribute '{key}'", 400
 
         for key, value in kwargs.items():
             setattr(project, key, value)
 
         db.session.commit()
 
-        return project
-
-    def update_project(self, id, **kwargs):
-        project = Project.query.filter_by(id=id).first()
-
-        if project == None:
-            return project
-
-        for key, value in kwargs.items():
-            setattr(project, key, value)
-
-        db.session.commit()
-
-        return project
+        return project, "OK", 200
 
     def get_project(self, **kwargs):
         project = Project.query.filter_by(**kwargs).first()

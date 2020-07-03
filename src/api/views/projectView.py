@@ -11,6 +11,7 @@ from api.controllers import projectController
 def create_project():
     """
     Create project
+    Current user creates project
     ---
     tags:
         - Project
@@ -36,16 +37,16 @@ def create_project():
                     description: Description of the project
                 languages:
                     type: string
-                    description: List of programming languages the project uses
+                    description: (Optional) List of programming languages the project uses
                 development_status:
                     type: integer
                     description: Development status of the project
                 creation_date:
                     type: string
-                    description: Creation date of the project
+                    description: (Optional) Creation date of the project
                 release_date:
                     type: string
-                    description: Release date of the project
+                    description: (Optional) Release date of the project
                 repository:
                     type: string
                     description: Url of the project's repository
@@ -72,22 +73,19 @@ def create_project():
         404:
             description: User doesn't exist
     """
-    return wrap_response(*projectController.create_project(get_jwt_identity(), **request.get_json()))
+    return wrap_response(*projectController.create_project(user_id=get_jwt_identity(), **request.get_json()))
 
-@app.route("/projects/<id>", methods=['PUT'])
-def update_project(id):
+@app.route("/project", methods=['PUT'])
+@jwt_required
+@body_required
+def update_project():
     """
     Update project
-    Updates project with `id` using the data in request body
+    Updates current user's project with the data in request body
     ---
     tags:
         - Project
     parameters:
-        -   in: path
-            name: id
-            type: integer
-            required: true
-            description: Id of project to update
         -   in: body
             name: Project
             required: true
@@ -99,16 +97,10 @@ def update_project(id):
             description: Project updated successfully
         400:
             description: Failed to update project
+        404:
+            description: Current user or requested project not found
     """
-    if 'id' in request.get_json():
-        return "Failed to update project. Request body can not specify project's id.", 501
-
-    project = projectController.update_project(id, **request.get_json())
-
-    if project == None:
-        return "Failed to update project.", 400
-    else:
-        return jsonify(project.as_dict()), 200
+    return wrap_response(*projectController.update_project(user_id=get_jwt_identity(), **request.get_json()))
 
 @app.route("/projects/<id>", methods=['GET'])
 def get_project(id):
