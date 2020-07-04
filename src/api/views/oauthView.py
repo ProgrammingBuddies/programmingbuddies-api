@@ -7,15 +7,6 @@ from api.controllers import userController
 from flask_dance.contrib.github import make_github_blueprint, github
 from flask_dance.consumer import oauth_authorized
 
-app.secret_key = environ.get("APP_SECRET")
-github_blueprint = make_github_blueprint(
-    client_id = environ.get("GITHUB_ID"),
-    client_secret = environ.get("GITHUB_SECRET")
-)
-
-app.register_blueprint(github_blueprint, url_prefix="/login")
-
-app.config['JWT_SECRET_KEY'] = environ.get("JWT_SECRET_KEY")
 jwt = JWTManager(app)
 
 @jwt.user_identity_loader
@@ -80,7 +71,7 @@ def register_callback(blueprint):
         redirect_token = f"?state={session.pop('state')}"
         if user is None:
             user, msg, code = userController.create_user(github_id=id, name=session.pop('username', "Anton"))
-        
+
         if user is None:
             redirect_token += f"&msg={msg}&code={code}"
         else:
@@ -88,4 +79,3 @@ def register_callback(blueprint):
             redirect_token += f"&token={access_token}"
 
         return redirect(session.pop('redirect') + redirect_token)
-
