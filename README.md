@@ -31,7 +31,7 @@ Requirements:
 Run the server:
 - `pipenv run python src/runserver.py`
     - Run with flag `--reset-db` to drop and recreate all tables on start
-- for information on how to authenticate for the API, see [authentication](#authentication)
+- For information on how to authenticate for the API, see [authentication](#authentication)
 
 ## Environment
 
@@ -43,30 +43,36 @@ Run the server:
     - Create a new one and set the homepage url to `https://localhost:5001/` and Authorization callback to `https://localhost:5001/login/github/authorized`
     - Copy the Client Id and Client Secret from that site and save them in `.env` as `GITHUB_ID` and `GITHUB_SECRET` respectively
 4. Furthermore a `JWT_SECRET_KEY` is required for signing the JWT-tokens
-    - pick a strong passphrase so that attackers can't brute-force it and sign tokens distinguishing as your server
+    - Pick a strong passphrase so that attackers can't brute-force it and sign tokens distinguishing as your server
 
 Your `.env` file should now look something like [example.env](https://github.com/ProgrammingBuddies/programmingbuddies-api/blob/develop/example.env)
 
 ## Authentication
+- To authenticate you have to specify several attributes
+    - `account` - currently `github` is the only supported value
+    - `username` - your username of account on specified platform in the previous point
+    - `redirect` - url where should you be redirected after authenticating with OAuth
+- Put it all these together `https://<url:port>/<login-or-register>?account=<account>&username=<username>&redirect=<redirect>`
+    - e.g.: `https://localhost:5001/<login-or-register>?account=github&username=freddy&redirect=https://localhost:5001` will `login-or-register` using GitHub account with name `freddy` while developing local with the server hosted on `localhost:5001`
+- You will be redirected to the specified url and get data with it
+    - If the request **failed** - when logging in and user was not registered (user not found in the database) or there was any internal error, you will get an error message and code
+    - If the request **succeeded** - you will get a JWT `token` in the URL, that is what you need to authenticate
+- Add to your requests `Authorization` header with a value `Bearer <token>` where you replace `<token>` with your `token` acquired in the step above
 #### Login
 - `/login` route logs in if the user exists in the database, otherwise returns a error message and code in the URL
-- to log in you have to specify several attributes
-    - `account` - currently `github` is the only value that is supported
-    - `username` - your username of account on specified platform in the previous step
-    - `redirect` - url where should you be redirected after authenticating with OAuth
-- put it all these together `https://<url:port>/login?account=<account>&username=<username>&redirect=<redirect>`
-    - e.g.: `https://localhost:5001/login?account=github&username=freddy&redirect=https://localhost:5001` for GitHub account with name `freddy` while developing local with the server hosted on `localhost:5001`
-- you will be redirected to the specified url and get data with it
-    - if the request failed - user was not registered before (user not found in the database), you will get an error message and code
-    - if the request succeeded - you will get a JWT `token` in the URL, that is what you need to authenticate
-- add to your requests `Authorization` header with a value `Bearer <token>` where you replace `<token>` with your `token` acquired in the step above
+- Usage: `https://<url:port>/login?account=<account>&username=<username>&redirect=<redirect>`
+    - e.g.: `https://localhost:5001/login?account=github&username=freddy&redirect=https://localhost:5001`
+
 #### Register
+- `/register` route either logs in if the user exists in the database or registers (creates) a new user, in case of failure returns a error message and code in the URL
+- Usage: `https://<url:port>/register?account=<account>&username=<username>&redirect=<redirect>`
+    - e.g.: `https://localhost:5001/register?account=github&username=freddy&redirect=https://localhost:5001`
 
 ## Testing
 
-- to run multiple tests just specify the directory which contains them for example `pipenv run pytest tests/`
-    - this will run all the tests in the `tests` directory
-- if you want to run test cases only in a particular file, then just give the full file path `pipenv run pytest tests/example.py`
+- To run multiple tests just specify the directory which contains them for example `pipenv run pytest tests/`
+    - This will run all the tests in the `tests` directory
+- If you want to run test cases only in a particular file, then just give the full file path `pipenv run pytest tests/example.py`
 
 ## Tech stack:
 
