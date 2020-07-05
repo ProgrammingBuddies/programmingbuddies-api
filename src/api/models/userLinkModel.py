@@ -1,10 +1,12 @@
 from api.models import db
+from api.models.column import Column
+
 
 class UserLink(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    url = db.Column(db.Text, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    id = Column(db.Integer, primary_key=True, readonly=True)
+    name = Column(db.String(80), nullable=False)
+    url = Column(db.Text, nullable=False)
+    user_id = Column(db.Integer, db.ForeignKey('user.id'), nullable=False, readonly=True)
 
     def as_dict(self):
         obj_d = {

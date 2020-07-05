@@ -93,6 +93,14 @@ class UserController:
             except TypeError:
                 return None, "Not correct json format", 400
 
+            for key in req.get_json():
+                if hasattr(UserLink, key):
+                    col = getattr(UserLink, key)
+                    if col.prop.expression.readonly:
+                        return None, "forbidden attribute", 400
+                else:
+                    return None, "More json parameters where given than expected", 400
+
             try:
                 link = UserLink(user_id=user_id, **req.get_json())
             except TypeError:
