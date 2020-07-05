@@ -248,7 +248,7 @@ def update_project_link():
             description: Project link not found
     """
     if "user_id" in request.get_json():
-        return wrap_response(None, "Failed to create project link. Request body must not contain 'user_id'.", 400)
+        return wrap_response(None, "Failed to update project link. Request body must not contain 'user_id'.", 400)
 
     return wrap_response(*projectController.update_link(user_id=get_jwt_identity(), **request.get_json()))
 
@@ -276,21 +276,21 @@ def get_all_project_links(project_id):
 
     return jsonify(links), 200
 
-@app.route("/projects/<project_id>/links/<link_id>", methods=['DELETE'])
-def delete_project_link(project_id, link_id):
+@app.route("/project/link", methods=['DELETE'])
+def delete_project_link():
     """
     Delete project link
-    Deletes project link with `project_id` and `link_id`
+    Deletes project link with data in the request body
     ---
     tags:
         - ProjectLink
     parameters:
-        -   in: path
+        -   in: body
             name: project_id
             type: integer
             required: true
             description: Id of the project
-        -   in: path
+        -   in: body
             name: link_id
             type: integer
             required: true
@@ -298,15 +298,15 @@ def delete_project_link(project_id, link_id):
     responses:
         200:
             description: Project link deleted successfully
+        400:
+            description: Failed to delete project link
         404:
             description: Project link not found
     """
-    link = projectController.delete_link(project_id, link_id)
+    if "user_id" in request.get_json():
+        return wrap_response(None, "Failed to delete project link. Request body must not contain 'user_id'.", 400)
 
-    if link == None:
-        return "", 404
-    else:
-        return "", 200
+    return wrap_response(*projectController.delete_link(user_id=get_jwt_identity(), **request.get_json()))
 
 # Project Feedback
 @app.route("/projects/<project_id>/feedbacks", methods=['POST'])
