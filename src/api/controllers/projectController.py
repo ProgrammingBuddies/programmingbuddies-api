@@ -121,22 +121,30 @@ class ProjectController:
             self.session.rollback()
             return None, "Failed to create project link.", 400
 
-    def update_link(self, project_id, link_id, **kwargs):
-        link = ProjectLink.query.filter_by(project_id=project_id, id=link_id).first()
+    def update_link(self, user_id, **kwargs):
+        if "project_id" not in kwargs:
+            return None, "Failed to update project link. Request body must specify link's 'project_id'.", 400
 
-        if link == None:
-            return None
+        if "link" in kwargs and "project_id" in kwargs and "id" in kwargs["link"] and len(kwargs) == 2:
+            if kwargs["link"]["id"] is None or kwargs["project_id"] is None:
+                return None, "Arguments can't be empty", 400
+            link = ProjectLink.query.filter_by(project_id=kwargs["project_id"], id=kwargs["link"]["id"]).first()
 
-        for key, value in kwargs.items():
-            if not hasattr(link, key):
-                return None
+            if link == None:
+                return None, "Failed to update project link. Project link not found.", 404
 
-        for key, value in kwargs.items():
-            setattr(link, key, value)
+            for key, value in kwargs["link"].items():
+                if not hasattr(link, key):
+                    return None, f"Failed to update project link. Forbidden attribute '{key}'.", 400
 
-        db.session.commit()
+            for key, value in kwargs["link"].items():
+                setattr(link, key, value)
 
-        return link
+            db.session.commit()
+
+            return link, "OK", 200
+        else:
+            return None, "Forbidden attributes used in request. Only 'project_id' and 'link' object containing 'id', 'name' and 'url' allowed.", 400
 
     def get_all_links(self, project_id):
         all_links = ProjectLink.query.filter_by(project_id=project_id).all()

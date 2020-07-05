@@ -219,25 +219,20 @@ def create_project_link():
 
     return wrap_response(*projectController.create_link(user_id=get_jwt_identity(), **request.get_json()))
 
-@app.route("/projects/<project_id>/links/<link_id>", methods=['PUT'])
-def update_project_link(project_id, link_id):
+@app.route("/project/link", methods=['PUT'])
+def update_project_link():
     """
     Update project link
-    Updates project link with `project_id` and `link_id` using the data in request body
+    Updates project link with data in the request body
     ---
     tags:
         - ProjectLink
     parameters:
-        -   in: path
+        -   in: body
             name: project_id
             type: integer
             required: true
             description: Id of the project
-        -   in: path
-            name: link_id
-            type: integer
-            required: true
-            description: Id of the project link to update
         -   in: body
             name: ProjectLink
             required: true
@@ -249,18 +244,13 @@ def update_project_link(project_id, link_id):
             description: Project link updated successfully
         400:
             description: Failed to update project link
+        404:
+            description: Project link not found
     """
-    if 'project_id' in request.get_json():
-        return "Failed to update project link. Request body can not specify link's project_id.", 400
-    elif 'link_id' in request.get_json():
-        return "Failed to update project link. Request body can not specify link's link_id.", 400
+    if "user_id" in request.get_json():
+        return wrap_response(None, "Failed to create project link. Request body must not contain 'user_id'.", 400)
 
-    link = projectController.update_link(project_id, link_id, **request.get_json())
-
-    if link == None:
-        return "Failed to update project link.", 400
-    else:
-        return jsonify(link.as_dict()), 200
+    return wrap_response(*projectController.update_link(user_id=get_jwt_identity(), **request.get_json()))
 
 @app.route("/projects/<project_id>/links", methods=['GET'])
 def get_all_project_links(project_id):
