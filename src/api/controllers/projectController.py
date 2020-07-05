@@ -102,16 +102,24 @@ class ProjectController:
         return project, "OK", 200
 
     # Project Link
-    def create_link(self, project_id, **kwargs):
-        try:
-            link = ProjectLink(project_id=project_id, **kwargs)
-            self.session.add(link)
-            self.session.commit()
+    def create_link(self, user_id, **kwargs):
+        if "project_id" not in kwargs:
+            return None, "Failed to create project link. Request body must specify link's 'project_id'.", 400
 
-            return link
+        try:
+            if "link" in kwargs and "project_id" in kwargs and "name" in kwargs["link"] and "url" in kwargs["link"] and len(kwargs) == 2:
+                if kwargs["link"]["name"] is None or kwargs["link"]["url"] is None or kwargs["project_id"] is None:
+                    return None, "Arguments can't be empty", 400
+                link = ProjectLink(project_id=kwargs["project_id"], **kwargs["link"])
+                self.session.add(link)
+                self.session.commit()
+
+                return link, "OK", 201
+            else:
+                return None, "Forbidden attributes used in request. Only 'project_id' and 'link' object containing 'name' and 'url' allowed.", 400
         except:
             self.session.rollback()
-            return None
+            return None, "Failed to create project link.", 400
 
     def update_link(self, project_id, link_id, **kwargs):
         link = ProjectLink.query.filter_by(project_id=project_id, id=link_id).first()

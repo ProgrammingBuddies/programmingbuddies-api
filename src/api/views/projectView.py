@@ -171,14 +171,21 @@ def delete_project():
     return wrap_response(*projectController.delete_project(user_id=get_jwt_identity(), **request.get_json()))
 
 # Project Link
-@app.route("/projects/<project_id>/links", methods=['POST'])
-def create_project_link(project_id):
+@app.route("/project/link", methods=['POST'])
+@jwt_required
+@body_required
+def create_project_link():
     """
     Create project link
     ---
     tags:
         - ProjectLink
     parameters:
+        -   in: body
+            name: project_id
+            type: integer
+            required: true
+            description: Id of project for which link shall be created
         -   in: body
             name: ProjectLink
             required: true
@@ -207,15 +214,10 @@ def create_project_link(project_id):
         400:
             description: Failed to create project link
     """
-    if 'project_id' in request.get_json():
-        return "Failed to create project link. Request body can not specify link's project_id.", 400
+    if "user_id" in request.get_json():
+        return wrap_response(None, "Failed to create project link. Request body must not contain 'user_id'.", 400)
 
-    link = projectController.create_link(project_id, **request.get_json())
-
-    if link == None:
-        return "Failed to create project link.", 400
-    else:
-        return jsonify(link.as_dict()), 201
+    return wrap_response(*projectController.create_link(user_id=get_jwt_identity(), **request.get_json()))
 
 @app.route("/projects/<project_id>/links/<link_id>", methods=['PUT'])
 def update_project_link(project_id, link_id):
