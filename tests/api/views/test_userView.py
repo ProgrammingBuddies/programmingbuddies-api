@@ -15,7 +15,6 @@ class TestUserView(object):
         'occupation': 'cashier'
     }
 
-
     def test_update_user(self, client):
         token, _ = create_access_token_for_test_cases(self.valid_data)
 
@@ -36,50 +35,19 @@ class TestUserView(object):
 
         response = client.delete('/user', headers={"Authorization": f"Bearer {token}"})
         assert response.status_code == 404
-        
+
 
     def test_get_user(self, client):
         token, user = create_access_token_for_test_cases(self.valid_data)
-        
+
         response = client.get('/user', headers={"Authorization": f"Bearer {token}"})
         assert response.status_code == 200
         assert response.get_json() == {"data": user.as_dict(), "msg": "OK"}
 
         delete_user_for_test_cases(user)
-        
+
         response = client.get('/user', headers={"Authorization": f"Bearer {token}"})
         assert response.status_code == 404
-
-
-        
-
-    def test_get_all_users(self, client):
-        create_user_for_test_cases(self.valid_data)
-
-        self.valid_data = {
-            'name': 'Valid',
-            'bio': 'new',
-            'languages': 'DE',
-            'interests': 'e',
-            'location': 'nowhere',
-            'occupation': 'cashier2.1'
-        }
-
-        create_user_for_test_cases(self.valid_data)
-
-        response = client.get('/users')
-        assert response.status_code == 200
-
-        users_list = User.query.all()
-        users_dict = [users_list[0].as_dict(), users_list[1].as_dict()]
-        assert response.get_json() == [users_list[0].as_dict(), users_list[1].as_dict()]
-
-        db.session.delete(users_list[0])
-        db.session.commit()
-
-        response = client.get('/users')
-        assert response.status_code == 200
-        assert response.get_json() == [users_dict[1]]
 
     def test_create_user_link(self, client):
         token, user = create_access_token_for_test_cases(self.valid_data)

@@ -43,11 +43,6 @@ class UserController:
 
         return user, "OK", 200
 
-    def get_all_users(self, **kwargs):
-        all_users = User.query.all()
-
-        return all_users
-
     def delete_user(self, id):
         # Remove all user's links
         for link in UserLink.query.filter_by(user_id=id).all():
