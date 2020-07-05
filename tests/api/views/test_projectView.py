@@ -119,25 +119,6 @@ class TestProjectView(object):
         assert response.status_code == 200
         assert response.get_json()["name"] == "Nlink"
 
-    def test_get_all_project_links(self, client):
-        p1 = create_project_for_test_cases(self.valid_project_data)
-        p_link1 = create_project_link_for_test_cases(
-            {
-            "name": "Plink",
-            "url": "https://xll.com",
-            "project_id": p1["id"]
-        })
-        p_link2 = create_project_link_for_test_cases(
-            {
-            "name": "Other",
-            "url": "https://pp.com",
-            "project_id": p1["id"]
-        })
-
-        response = client.get('/projects/{}/links'.format(p1["id"]))
-        assert response.status_code == 200
-        assert response.get_json() == [p_link1, p_link2]
-
     def test_delete_project_link(self, client):
         url = '/projects/{0}/links/{1}'
 

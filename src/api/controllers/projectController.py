@@ -145,11 +145,6 @@ class ProjectController:
         else:
             return None, "Forbidden attributes used in request. Only 'project_id' and 'link' object containing 'id', 'name' and 'url' allowed.", 400
 
-    def get_all_links(self, project_id):
-        all_links = ProjectLink.query.filter_by(project_id=project_id).all()
-
-        return all_links
-
     def delete_link(self, user_id, **kwargs):
         if "project_id" in kwargs and "link" in kwargs and "id" in kwargs["link"] and len(kwargs) == 2 and len(kwargs["link"]) == 1:
             if kwargs["project_id"] is None or kwargs["link"]["id"] is None:

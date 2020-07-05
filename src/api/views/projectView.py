@@ -220,6 +220,8 @@ def create_project_link():
     return wrap_response(*projectController.create_link(user_id=get_jwt_identity(), **request.get_json()))
 
 @app.route("/project/link", methods=['PUT'])
+@jwt_required
+@body_required
 def update_project_link():
     """
     Update project link
@@ -252,31 +254,9 @@ def update_project_link():
 
     return wrap_response(*projectController.update_link(user_id=get_jwt_identity(), **request.get_json()))
 
-@app.route("/projects/<project_id>/links", methods=['GET'])
-def get_all_project_links(project_id):
-    """
-    Get all project links
-    Retreives all project links with `project_id`
-    ---
-    tags:
-        - ProjectLink
-    parameters:
-        -   in: path
-            name: project_id
-            type: integer
-            required: true
-            description: Id of the project
-    responses:
-        200:
-            description: List of project links
-    """
-    all_links = projectController.get_all_links(project_id)
-
-    links = [ link.as_dict() for link in all_links ]
-
-    return jsonify(links), 200
-
 @app.route("/project/link", methods=['DELETE'])
+@jwt_required
+@body_required
 def delete_project_link():
     """
     Delete project link
