@@ -185,7 +185,6 @@ def get_all_user_links():
 
 @app.route("/user/link", methods=['DELETE'])
 @jwt_required
-@body_required
 def delete_user_link():
     """
     Delete user link
@@ -210,7 +209,7 @@ def delete_user_link():
         404:
             description: User link not found
     """
-    return wrap_response(*userController.delete_link(get_jwt_identity(), **request.get_json()))
+    return wrap_response(*userController.delete_link(get_jwt_identity(), request))
 
 # User Feedback
 @app.route("/user/feedback", methods=['POST'])

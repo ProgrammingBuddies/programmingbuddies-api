@@ -122,19 +122,23 @@ class UserController:
 
         return user.links, "OK", 200
 
-    def delete_link(self, user_id, **kwargs):
-        if not 'id' in kwargs:
-            return None, "Missing required parameter 'id'", 400
+    def delete_link(self, user_id, req):
+        try:
+            link = UserLink.query.filter_by(user_id=user_id, id=req.args.get('id')).first()
 
-        link = UserLink.query.filter_by(user_id=user_id, id=kwargs['id']).first()
+            if link == None:
+                return None, "Link not found", 404
 
-        if link == None:
-            return None, "Link not found", 404
+            db.session.delete(link)
+            db.session.commit()
 
-        db.session.delete(link)
-        db.session.commit()
+            return link, "OK", 200
 
-        return link, "OK", 200
+        except Exception as e:
+            print(type(e))
+            print(e)
+            self.session.rollback()
+            return None, "link creation failed", 500
 
     # User Feedback
     def create_feedback(self, user_id, **kwargs):
