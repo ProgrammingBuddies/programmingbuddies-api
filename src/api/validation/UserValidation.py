@@ -8,3 +8,10 @@ class UserLinkCreateValidation(Inputs):
         'name': [InputRequired("name required")],
         'url': [InputRequired("url required"), URL()]
     }
+
+
+class UserLinkUpdateValidation(Inputs):
+    json = {
+        'id': [InputRequired("id required")],
+        'url': [URL()]
+    }

@@ -1,5 +1,6 @@
+from api.controllers.validationController import validate, validateForUpdate
 from api.models import db, User, UserHasProject, UserLink, UserFeedback
-from api.validation.UserValidation import UserLinkCreateValidation
+from api.validation.UserValidation import UserLinkCreateValidation, UserLinkUpdateValidation
 from flask_jwt_extended import get_jwt_identity
 
 
@@ -74,66 +75,45 @@ class UserController:
     # User Link
     def create_link(self, user_id, req):
         try:
-            # if 'name' in kwargs and 'url' in kwargs and len(kwargs) == 2:
-            #
-            #     if kwargs['name'] is None or kwargs['url'] is None:
-            #         return None, "Arguments can't be empty", 400
-            #     link = UserLink(user_id=user_id, **kwargs)
-            #     self.session.add(link)
-            #     self.session.commit()
-            #
-            #     return link, "OK", 201
-            # else:
-            #     return None, "Forbidden attributes used in request. only name and url allowed.", 400
-
-            inputs = UserLinkCreateValidation(req)
-            try:
-                if not inputs.validate():
-                    return None, inputs.errors, 400
-            except TypeError:
-                return None, "Not correct json format", 400
-
-            for key in req.get_json():
-                if hasattr(UserLink, key):
-                    col = getattr(UserLink, key)
-                    if col.prop.expression.readonly:
-                        return None, "forbidden attribute", 400
-                else:
-                    return None, "More json parameters where given than expected", 400
-
-            try:
+            v = validate(req, UserLinkCreateValidation, UserLink)
+            if v == True:
                 link = UserLink(user_id=user_id, **req.get_json())
-            except TypeError:
-                return None, "More json parameters where given than expected", 400
-            self.session.add(link)
-            self.session.commit()
+                self.session.add(link)
+                self.session.commit()
 
-            return link, "OK", 201
+                return link, "OK", 201
+            else:
+                return v
+
         except Exception as e:
             print(type(e))
+            print(e)
             self.session.rollback()
             return None, "link creation failed", 500
 
-    def update_link(self, user_id, **kwargs):
-        if not 'id' in kwargs:
-            return None, "Missing required parameter 'id'", 400
-        print(kwargs['id'])
-        print(user_id)
-        link = UserLink.query.filter_by(user_id=user_id, id=kwargs['id']).first()
+    def update_link(self, user_id, req):
+        try:
+            v = validateForUpdate(req, UserLinkUpdateValidation, UserLink)
+            if v == True:
+                json = req.get_json()
+                link = UserLink.query.filter_by(user_id=user_id, id=json['id']).first()
 
-        if link == None:
-            return None, "User doesn't have a link with that id or user doesn't exist", 404
+                if link is None:
+                    return None, "User doesn't have a link with that id or user doesn't exist", 404
 
-        for key, value in kwargs.items():
-            if not hasattr(link, key):
-                return None, f"Forbidden attribute {key} used", 400
+                for key, value in json.items():
+                    setattr(link, key, value)
 
-        for key, value in kwargs.items():
-            setattr(link, key, value)
+                self.session.commit()
+                return link, "OK", 200
+            else:
+                return v
 
-        db.session.commit()
-
-        return link, "OK", 200
+        except Exception as e:
+            print(type(e))
+            print(e)
+            self.session.rollback()
+            return None, "link update failed", 500
 
     def get_all_links(self, user_id):
         user = User.query.filter_by(id=user_id).first()

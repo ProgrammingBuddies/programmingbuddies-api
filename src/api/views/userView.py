@@ -162,7 +162,7 @@ def update_user_link():
             description: User or link don't exist
     """
 
-    return wrap_response(*userController.update_link(get_jwt_identity(), **request.get_json()))
+    return wrap_response(*userController.update_link(get_jwt_identity(), request))
 
 @app.route("/user/links", methods=['GET'])
 @jwt_required
