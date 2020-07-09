@@ -144,22 +144,16 @@ class ProjectController:
         else:
             return None, "Forbidden attributes used in request. Only 'project_id' and 'link' object containing 'id', 'name' and 'url' allowed.", 400
 
-    def delete_link(self, user_id, **kwargs):
-        if "project_id" in kwargs and "link" in kwargs and "id" in kwargs["link"] and len(kwargs) == 2 and len(kwargs["link"]) == 1:
-            if kwargs["project_id"] is None or kwargs["link"]["id"] is None:
-                return None, "Arguments can't be empty", 400
+    def delete_link(self, user_id, link_id):
+        link = ProjectLink.query.filter_by(id=link_id).first()
 
-            link = ProjectLink.query.filter_by(project_id=kwargs["project_id"], id=kwargs["link"]["id"]).first()
+        if link == None:
+            return None, "Failed to delete project link. Project link not found.", 404
 
-            if link == None:
-                return None, "Failed to delete project link. Project link not found.", 404
+        db.session.delete(link)
+        db.session.commit()
 
-            db.session.delete(link)
-            db.session.commit()
-
-            return link, "OK", 200
-        else:
-            return None, "Forbidden attributes used in request. Only 'project_id' and 'link' object containing 'id' allowed.", 400
+        return link, "OK", 200
 
     # Project Feedback
     def create_feedback(self, author_id, **kwargs):

@@ -254,23 +254,17 @@ def update_project_link():
 
     return wrap_response(*projectController.update_link(user_id=get_jwt_identity(), **request.get_json()))
 
-@app.route("/project/link", methods=['DELETE'])
+@app.route("/project/link/<link_id>", methods=['DELETE'])
 @jwt_required
-@body_required
-def delete_project_link():
+def delete_project_link(link_id):
     """
     Delete project link
-    Deletes project link with data in the request body
+    Deletes project link with `link_id`
     ---
     tags:
         - ProjectLink
     parameters:
-        -   in: body
-            name: project_id
-            type: integer
-            required: true
-            description: Id of the project
-        -   in: body
+        -   in: path
             name: link_id
             type: integer
             required: true
@@ -283,10 +277,7 @@ def delete_project_link():
         404:
             description: Project link not found
     """
-    if "user_id" in request.get_json():
-        return wrap_response(None, "Failed to delete project link. Request body must not contain 'user_id'.", 400)
-
-    return wrap_response(*projectController.delete_link(user_id=get_jwt_identity(), **request.get_json()))
+    return wrap_response(*projectController.delete_link(user_id=get_jwt_identity(), link_id=link_id))
 
 # Project Feedback
 @app.route("/project/feedback", methods=['POST'])
