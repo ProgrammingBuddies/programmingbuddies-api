@@ -99,6 +99,8 @@ class TestProjectView(object):
         assert response.status_code == 201
 
     def test_update_project_link(self, client):
+        token, _ = create_access_token_for_test_cases(self.valid_user_data)
+
         p1 = create_project_for_test_cases(self.valid_project_data)
         p1_link = create_project_link_for_test_cases(
             {
@@ -107,19 +109,17 @@ class TestProjectView(object):
             "project_id": p1["id"]
         })
 
-        url = '/projects/{0}/links/{1}'
+        url = '/project/link'
 
-        # notice: this shouldn't give 500 error
-        # response = client.post(url.format(p1["id"], 0))
-        # assert response.status_code == 404
+        response = client.put(url, headers={"Authorization": f"Bearer {token}"}, json={"project_id": p1["id"], "id": 0})
+        assert response.status_code == 404
 
-        # notice: this shouldn't give 500 error
-        # response = client.post(url.format(0, p1_link["id"]))
-        # assert response.status_code == 404
+        response = client.put(url, headers={"Authorization": f"Bearer {token}"}, json={"project_id": 0, "id": p1_link["id"]})
+        assert response.status_code == 404
 
-        response = client.post(url.format(p1["id"], p1_link["id"]), json={"name": "Nlink"})
+        response = client.put(url, headers={"Authorization": f"Bearer {token}"}, json={"project_id": p1["id"], "id": p1_link["id"], "name": "Nlink"})
         assert response.status_code == 200
-        assert response.get_json()["name"] == "Nlink"
+        assert response.get_json()["data"]["name"] == "Nlink"
 
     def test_delete_project_link(self, client):
         token, _ = create_access_token_for_test_cases(self.valid_user_data)
