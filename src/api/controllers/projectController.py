@@ -163,16 +163,25 @@ class ProjectController:
             return None, "Forbidden attributes used in request. Only 'project_id' and 'link' object containing 'id' allowed.", 400
 
     # Project Feedback
-    def create_feedback(self, project_id, **kwargs):
-        try:
-            feedback = ProjectFeedback(project_id=project_id, **kwargs)
-            self.session.add(feedback)
-            self.session.commit()
+    def create_feedback(self, user_id, **kwargs):
+        if 'project_id' not in kwargs:
+            return None, "Failed to create feedback. Request body must specify feedback's project_id.", 400
 
-            return feedback
+        try:
+            if "project_id" in kwargs and "rating" in kwargs and "description" in kwargs and len(kwargs) == 3:
+                if kwargs["project_id"] is None or kwargs["rating"] is None or kwargs["description"] is None:
+                    return None, "Arguments can't be empty", 400
+
+                feedback = ProjectFeedback(user_id=user_id, **kwargs)
+                self.session.add(feedback)
+                self.session.commit()
+
+                return feedback, "OK", 201
+            else:
+                return None, "Forbidden attributes used in request. Only 'project_id', 'rating' and 'description' allowed.", 400
         except:
             self.session.rollback()
-            return None
+            return None, "Failed to create project feedback.", 400
 
     def delete_feedback(self, project_id, feedback_id):
         feedback = ProjectFeedback.query.filter_by(project_id=project_id, id=feedback_id).first()

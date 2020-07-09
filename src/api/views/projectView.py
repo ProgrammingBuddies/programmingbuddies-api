@@ -289,8 +289,10 @@ def delete_project_link():
     return wrap_response(*projectController.delete_link(user_id=get_jwt_identity(), **request.get_json()))
 
 # Project Feedback
-@app.route("/projects/<project_id>/feedbacks", methods=['POST'])
-def create_project_feedback(project_id):
+@app.route("/project/feedback", methods=['POST'])
+@jwt_required
+@body_required
+def create_project_feedback():
     """
     Create project feedback
     ---
@@ -300,7 +302,7 @@ def create_project_feedback(project_id):
         -   in: body
             name: ProjectFeedback
             required: true
-            description: Project feedback object containing data to update
+            description: Project feedback object containing data to create
             schema:
                 $ref: "#/definitions/ProjectFeedback"
     definitions:
@@ -328,15 +330,10 @@ def create_project_feedback(project_id):
         400:
             description: Failed to create project feedback
     """
-    if 'project_id' in request.get_json():
-        return "Failed to create feedback. Request body can not specify feedback's project_id.", 400
+    if "user_id" in request.get_json():
+        return wrap_response(None, "Failed to create project feedback. Request body must not contain 'user_id'.", 400)
 
-    feedback = projectController.create_feedback(project_id, **request.get_json())
-
-    if feedback == None:
-        return "Failed to create feedback.", 400
-    else:
-        return jsonify(feedback.as_dict()), 201
+    return wrap_response(*projectController.create_feedback(user_id=get_jwt_identity(), **request.get_json()))
 
 @app.route("/projects/<project_id>/feedbacks/<feedback_id>", methods=['DELETE'])
 def delete_project_feedback(project_id, feedback_id):
