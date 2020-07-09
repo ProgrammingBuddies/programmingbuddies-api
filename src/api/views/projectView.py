@@ -182,11 +182,6 @@ def create_project_link():
         - ProjectLink
     parameters:
         -   in: body
-            name: project_id
-            type: integer
-            required: true
-            description: Id of project for which link shall be created
-        -   in: body
             name: ProjectLink
             required: true
             description: Project link object containing data to update
