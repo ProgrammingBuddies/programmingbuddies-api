@@ -1,4 +1,4 @@
-def validate(req, validator, model):
+def validateForCreate(req, validator, model):
     inputValidator = validator(req)
     try:
         if not inputValidator.validate():
@@ -9,7 +9,7 @@ def validate(req, validator, model):
     for key in req.get_json():
         if hasattr(model, key):
             col = getattr(model, key)
-            if col.prop.expression.readonly:
+            if col.prop.expression.const:
                 return None, "forbidden attribute", 400
         else:
             return None, "More json parameters where given than expected", 400
@@ -28,7 +28,7 @@ def validateForUpdate(req, validator, model):
         if key != "id":
             if hasattr(model, key):
                 col = getattr(model, key)
-                if col.prop.expression.readonly:
+                if col.prop.expression.readonly or col.prop.expression.const:
                     return None, "forbidden attribute", 400
             else:
                 return None, "More json parameters where given than expected", 400

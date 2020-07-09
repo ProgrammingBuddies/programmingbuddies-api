@@ -4,7 +4,7 @@ from wtforms.validators import InputRequired, URL, Length
 
 class UserLinkCreateValidation(Inputs):
     json = {
-        'name': [InputRequired("name required")],
+        'name': [InputRequired("name required"), Length(max=80, message="name too big")],
         'url': [InputRequired("url required"), URL()]
     }
 

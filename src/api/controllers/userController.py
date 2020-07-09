@@ -1,7 +1,6 @@
-from api.controllers.validationController import validate, validateForUpdate
+from api.controllers.validationController import validateForCreate, validateForUpdate
 from api.models import db, User, UserHasProject, UserLink, UserFeedback
-from api.validation.UserValidation import UserLinkCreateValidation, UserLinkUpdateValidation, \
-    UserFeedbackCreateValidation
+from api.validation.UserValidation import UserLinkCreateValidation, UserLinkUpdateValidation, UserFeedbackCreateValidation
 from flask_jwt_extended import get_jwt_identity
 
 
@@ -76,10 +75,10 @@ class UserController:
     # User Link
     def create_link(self, user_id, req):
         try:
-            v = validate(req, UserLinkCreateValidation, UserLink)
+            v = validateForCreate(req, UserLinkCreateValidation, UserLink)
             if v == True:
                 json = req.get_json()
-                user = User.query.filter_by(id=json['id']).first()
+                user = User.query.filter_by(id=user_id).first()
                 if user is None:
                     return None, "User not found", 404
 
@@ -149,7 +148,7 @@ class UserController:
     # User Feedback
     def create_feedback(self, user_id, req):
         try:
-            v = validate(req, UserFeedbackCreateValidation, UserFeedback)
+            v = validateForCreate(req, UserFeedbackCreateValidation, UserFeedback)
             if v == True:
                 author = User.query.filter_by(id=user_id).first()
                 if author is None:
