@@ -122,27 +122,27 @@ class ProjectController:
             return None, "Failed to create project link.", 400
 
     def update_link(self, user_id, **kwargs):
-        if "project_id" in kwargs and "link" in kwargs and "id" in kwargs["link"] and len(kwargs) == 2:
-            if kwargs["project_id"] is None or kwargs["link"]["id"] is None:
+        if "project_id" in kwargs and "id" in kwargs and len(kwargs) >= 2:
+            if kwargs["project_id"] is None or kwargs["id"] is None:
                 return None, "Arguments can't be empty", 400
 
-            link = ProjectLink.query.filter_by(project_id=kwargs["project_id"], id=kwargs["link"]["id"]).first()
+            link = ProjectLink.query.filter_by(project_id=kwargs["project_id"], id=kwargs["id"]).first()
 
             if link == None:
                 return None, "Failed to update project link. Project link not found.", 404
 
-            for key, value in kwargs["link"].items():
+            for key, value in kwargs.items():
                 if not hasattr(link, key):
                     return None, f"Failed to update project link. Forbidden attribute '{key}'.", 400
 
-            for key, value in kwargs["link"].items():
+            for key, value in kwargs.items():
                 setattr(link, key, value)
 
             db.session.commit()
 
             return link, "OK", 200
         else:
-            return None, "Forbidden attributes used in request. Only 'project_id' and 'link' object containing 'id', 'name' and 'url' allowed.", 400
+            return None, "Forbidden attributes used in request. Only 'project_id', 'id', 'name' and 'url' allowed.", 400
 
     def delete_link(self, user_id, link_id):
         link = ProjectLink.query.filter_by(id=link_id).first()

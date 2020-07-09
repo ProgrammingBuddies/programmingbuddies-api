@@ -231,11 +231,6 @@ def update_project_link():
         - ProjectLink
     parameters:
         -   in: body
-            name: project_id
-            type: integer
-            required: true
-            description: Id of the project
-        -   in: body
             name: ProjectLink
             required: true
             description: Project link object containing data to update
