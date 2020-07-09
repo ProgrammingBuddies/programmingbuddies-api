@@ -241,7 +241,7 @@ def create_user_feedback():
             description: Failed to create user feedback
     """
 
-    return wrap_response(*userController.create_feedback(get_jwt_identity(), **request.get_json()))
+    return wrap_response(*userController.create_feedback(get_jwt_identity(), request))
 
 @app.route("/user/feedbacks", methods=['GET'])
 @body_required
