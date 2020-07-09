@@ -338,30 +338,6 @@ def create_project_feedback(project_id):
     else:
         return jsonify(feedback.as_dict()), 201
 
-@app.route("/projects/<project_id>/feedbacks", methods=['GET'])
-def get_all_project_feedbacks(project_id):
-    """
-    Get all project feedbacks
-    Retreives all project feedbacks with `project_id`
-    ---
-    tags:
-        - ProjectFeedback
-    parameters:
-        -   in: path
-            name: project_id
-            type: integer
-            required: true
-            description: Id of the project
-    responses:
-        200:
-            description: List of project feedbacks
-    """
-    all_feedbacks = projectController.get_all_feedbacks(project_id)
-
-    feedbacks = [ feedback.as_dict() for feedback in all_feedbacks ]
-
-    return jsonify(feedbacks), 200
-
 @app.route("/projects/<project_id>/feedbacks/<feedback_id>", methods=['DELETE'])
 def delete_project_feedback(project_id, feedback_id):
     """

@@ -174,11 +174,6 @@ class ProjectController:
             self.session.rollback()
             return None
 
-    def get_all_feedbacks(self, project_id):
-        all_feedbacks = ProjectFeedback.query.filter_by(project_id=project_id).all()
-
-        return all_feedbacks
-
     def delete_feedback(self, project_id, feedback_id):
         feedback = ProjectFeedback.query.filter_by(project_id=project_id, id=feedback_id).first()
 
