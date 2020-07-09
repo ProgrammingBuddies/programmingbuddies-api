@@ -87,13 +87,15 @@ class TestProjectView(object):
         assert [r["data"][0]["name"], r["data"][1]["name"]] == [project1["name"], project2["name"]]
 
     def test_create_project_link(self, client):
-        project = create_project_for_test_cases(self.valid_project_data)
-        url = '/projects/{}/links'.format(project["id"])
+        token, _ = create_access_token_for_test_cases(self.valid_user_data)
 
-        response = client.post(url, json={"user_id": 0})
+        project = create_project_for_test_cases(self.valid_project_data)
+        url = '/project/link'
+
+        response = client.post(url, headers={"Authorization": f"Bearer {token}"}, json={"user_id": 0})
         assert response.status_code == 400
 
-        response = client.post(url, json={"name": "Main link", "url": "http://main.link"})
+        response = client.post(url, headers={"Authorization": f"Bearer {token}"}, json={"project_id": project["id"], "name": "Main link", "url": "http://main.link"})
         assert response.status_code == 201
 
     def test_update_project_link(self, client):
