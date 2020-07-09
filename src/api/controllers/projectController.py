@@ -68,29 +68,22 @@ class ProjectController:
 
         return all_projects, "OK", 200
 
-    def delete_project(self, user_id, **kwargs):
-        if len(kwargs) != 1:
-            return None, "Failed to delete project. Request body must contain only project's id.", 400
+    def delete_project(self, user_id, id):
 
-        if 'id' not in kwargs:
-            return None, "Failed to delete project. Request body must specify project's id.", 400
-
-        project_id = kwargs["id"]
-
-        userHasProject = UserHasProject.query.filter_by(user_id=user_id, project_id=project_id).first()
+        userHasProject = UserHasProject.query.filter_by(user_id=user_id, project_id=id).first()
         # TODO: verify that the user owns the project (or has neccessary rights)
         if not userHasProject:
             return None, "Failed to delete project. Current user does not belong to specified project, or the project does not exist.", 404
 
         # Remove all project's links
-        for link in ProjectLink.query.filter_by(project_id=project_id).all():
+        for link in ProjectLink.query.filter_by(project_id=id).all():
             db.session.delete(link)
 
         # Remove project from all users
-        for project in UserHasProject.query.filter_by(project_id=project_id).all():
+        for project in UserHasProject.query.filter_by(project_id=id).all():
             db.session.delete(project)
 
-        project = Project.query.filter_by(id=project_id).first()
+        project = Project.query.filter_by(id=id).first()
 
         if project == None:
             # TODO: db.session.rollback?
