@@ -11,7 +11,17 @@
 
 """
 from flask_jwt_extended import create_access_token
-from tests import db, Project, User, UserLink, ProjectLink, UserFeedback
+from tests import db, Project, User, UserHasProject, UserLink, ProjectLink, UserFeedback
+
+""" Create relationship between user and project """
+def user_join_project_for_test_cases(user, project):
+    userHasProject = UserHasProject(role=1)
+    userHasProject.project = Project.query.filter_by(id=project["id"]).first()
+    userHasProject.user = user
+    # This line is not needed for some reason
+    # SQLAlchemy is doing some magic and I don't know shit about fuck
+    #user.projects.append(userHasProject)
+    db.session.commit()
 
 def create_project_for_test_cases(data):
     new_project = Project(**data)

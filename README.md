@@ -39,6 +39,9 @@ Run the server:
 
 Your `.env` file should now look something like [example.env](https://github.com/ProgrammingBuddies/programmingbuddies-api/blob/develop/example.env)
 
+- Optionally you can set the JWT token timeout
+    - `JWT_ACCESS_TOKEN_EXPIRES` - time in seconds
+
 ### Testing
 
 - to run multiple tests just specify the directory which contains them for example `pipenv run pytest tests/`

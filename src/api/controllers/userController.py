@@ -4,7 +4,7 @@ from flask_jwt_extended import get_jwt_identity
 from flask import jsonify
 
 class UserController:
-    session = db.session()
+    session = db.session
 
     # User
     def create_user(self, **kwargs):
@@ -16,17 +16,17 @@ class UserController:
             return user, "OK", 200
         except:
             self.session.rollback()
-            return None, "Forbidden Attributes", 400
+            return None, "Forbidden attributes", 400
 
     def update_user(self, id, **kwargs):
         user = User.query.filter_by(id=id).first()
 
         if user == None:
-            return None, "user not found", 404
+            return None, "User not found", 404
 
         for key, value in kwargs.items():
             if not hasattr(user, key):
-                return None, "forbidden attribute", 400
+                return None, f"Forbidden attribute '{key}'", 400
 
         for key, value in kwargs.items():
             setattr(user, key, value)
@@ -39,7 +39,7 @@ class UserController:
         user = User.query.filter_by(**kwargs).first()
 
         if user is None:
-            return None, "User Not Found", 404
+            return None, "User not found", 404
 
         return user, "OK", 200
 
@@ -60,7 +60,7 @@ class UserController:
         user = User.query.filter_by(id=id).first()
 
         if user == None:
-            return None, "user not found", 404
+            return None, "User not found", 404
 
         db.session.delete(user)
         db.session.commit()
@@ -81,7 +81,7 @@ class UserController:
                 return None, "Forbidden attributes used in request. only name and url allowed.", 400
         except:
             self.session.rollback()
-            return None, "link creation failed", 500
+            return None, "Link creation failed", 500
 
     def update_link(self, user_id, **kwargs):
         if not 'id' in kwargs:
@@ -108,7 +108,7 @@ class UserController:
         user = User.query.filter_by(id=user_id).first()
         if user is None:
             return None, "User not found", 404
-        
+
         return user.links, "OK", 200
 
     def delete_link(self, user_id, **kwargs):

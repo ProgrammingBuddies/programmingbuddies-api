@@ -1,12 +1,17 @@
 from flask import request, jsonify
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from api import app
+from api.utils import wrap_response, body_required
 from api.controllers import projectController
 
 # Project
-@app.route("/projects", methods=['POST'])
+@app.route("/project", methods=['POST'])
+@jwt_required
+@body_required
 def create_project():
     """
     Create project
+    Current user creates project
     ---
     tags:
         - Project
@@ -32,16 +37,16 @@ def create_project():
                     description: Description of the project
                 languages:
                     type: string
-                    description: List of programming languages the project uses
+                    description: (Optional) List of programming languages the project uses
                 development_status:
                     type: integer
                     description: Development status of the project
                 creation_date:
                     type: string
-                    description: Creation date of the project
+                    description: (Optional) Creation date of the project
                 release_date:
                     type: string
-                    description: Release date of the project
+                    description: (Optional) Release date of the project
                 repository:
                     type: string
                     description: Url of the project's repository
@@ -65,28 +70,22 @@ def create_project():
             description: Project created successfully
         400:
             description: Failed to create project
+        404:
+            description: User doesn't exist
     """
-    project = projectController.create_project(**request.get_json())
+    return wrap_response(*projectController.create_project(user_id=get_jwt_identity(), **request.get_json()))
 
-    if project == None:
-        return "Failed to create project.", 400
-    else:
-        return jsonify(project.as_dict()), 201
-
-@app.route("/projects/<id>", methods=['PUT'])
-def update_project(id):
+@app.route("/project", methods=['PUT'])
+@jwt_required
+@body_required
+def update_project():
     """
     Update project
-    Updates project with `id` using the data in request body
+    Updates current user's project with the data in request body
     ---
     tags:
         - Project
     parameters:
-        -   in: path
-            name: id
-            type: integer
-            required: true
-            description: Id of project to update
         -   in: body
             name: Project
             required: true
@@ -98,18 +97,15 @@ def update_project(id):
             description: Project updated successfully
         400:
             description: Failed to update project
+        404:
+            description: Current user or requested project not found
     """
-    if 'id' in request.get_json():
-        return "Failed to update project. Request body can not specify project's id.", 501
+    if "user_id" in request.get_json():
+        return wrap_response(None, "Failed to update project. Request body must not contain 'user_id'.", 400)
 
-    project = projectController.update_project(id, **request.get_json())
+    return wrap_response(*projectController.update_project(user_id=get_jwt_identity(), **request.get_json()))
 
-    if project == None:
-        return "Failed to update project.", 400
-    else:
-        return jsonify(project.as_dict()), 200
-
-@app.route("/projects/<id>", methods=['GET'])
+@app.route("/project/<id>", methods=['GET'])
 def get_project(id):
     """
     Get project
@@ -129,14 +125,9 @@ def get_project(id):
         404:
             description: Project not found
     """
-    project = projectController.get_project(id=id)
+    return wrap_response(*projectController.get_project(id=id))
 
-    if project:
-        return jsonify(project.as_dict()), 200
-    else:
-        return "", 404
-
-@app.route("/projects", methods=['GET'])
+@app.route("/project/all", methods=['GET'])
 def get_all_projects():
     """
     Get all projects
@@ -148,17 +139,14 @@ def get_all_projects():
         200:
             description: List of projects
     """
-    all_projects = projectController.get_all_projects()
+    return wrap_response(*projectController.get_all_projects())
 
-    projects = [ project.as_dict() for project in all_projects ]
-
-    return jsonify(projects), 200
-
-@app.route("/projects/<id>", methods=['DELETE'])
+@app.route("/project/<id>", methods=['DELETE'])
+@jwt_required
 def delete_project(id):
     """
     Delete project
-    Deletes project with `id`
+    Deletes current user's project with the `id`
     ---
     tags:
         - Project
@@ -172,14 +160,11 @@ def delete_project(id):
         200:
             description: Project deleted successfully
         400:
-            description: Project not found
+            description: Failed to delete project
+        404:
+            description: Current user is not a member of requested project or the project was not found
     """
-    project = projectController.delete_project(id)
-
-    if project:
-        return "", 202
-    else:
-        return "", 404
+    return wrap_response(*projectController.delete_project(user_id=get_jwt_identity(), id=id))
 
 # Project Link
 @app.route("/projects/<project_id>/links", methods=['POST'])
