@@ -105,7 +105,7 @@ def update_project():
 
     return wrap_response(*projectController.update_project(user_id=get_jwt_identity(), **request.get_json()))
 
-@app.route("/projects/<id>", methods=['GET'])
+@app.route("/project/<id>", methods=['GET'])
 def get_project(id):
     """
     Get project
@@ -127,7 +127,7 @@ def get_project(id):
     """
     return wrap_response(*projectController.get_project(id=id))
 
-@app.route("/projects", methods=['GET'])
+@app.route("/project/all", methods=['GET'])
 def get_all_projects():
     """
     Get all projects
@@ -141,18 +141,17 @@ def get_all_projects():
     """
     return wrap_response(*projectController.get_all_projects())
 
-@app.route("/project", methods=['DELETE'])
+@app.route("/project/<id>", methods=['DELETE'])
 @jwt_required
-@body_required
-def delete_project():
+def delete_project(id):
     """
     Delete project
-    Deletes current user's project with the id in request body
+    Deletes current user's project with the `id`
     ---
     tags:
         - Project
     parameters:
-        -   in: body
+        -   in: path
             name: id
             type: integer
             required: true
@@ -165,10 +164,7 @@ def delete_project():
         404:
             description: Current user is not a member of requested project or the project was not found
     """
-    if "user_id" in request.get_json():
-        return wrap_response(None, "Failed to delete project. Request body must not contain 'user_id'.", 400)
-
-    return wrap_response(*projectController.delete_project(user_id=get_jwt_identity(), **request.get_json()))
+    return wrap_response(*projectController.delete_project(user_id=get_jwt_identity(), id=id))
 
 # Project Link
 @app.route("/project/link", methods=['POST'])
