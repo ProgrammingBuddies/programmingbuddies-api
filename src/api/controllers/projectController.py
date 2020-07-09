@@ -1,7 +1,6 @@
 from api.models import db, User, Project, UserHasProject, ProjectLink, ProjectFeedback
 
 class ProjectController:
-    # TODO: remove this (also from userController)?
     session = db.session
 
     # Project
@@ -183,15 +182,18 @@ class ProjectController:
             self.session.rollback()
             return None, "Failed to create project feedback.", 400
 
-    def delete_feedback(self, project_id, feedback_id):
-        feedback = ProjectFeedback.query.filter_by(project_id=project_id, id=feedback_id).first()
+    def delete_feedback(self, user_id, feedback_id):
+        feedback = ProjectFeedback.query.filter_by(id=feedback_id).first()
+
+        if feedback.user_id != user_id:
+            return None, "Failed to delete project feedback. Cannot delete project feedback that you did not create.", 400
 
         if feedback == None:
-            return None
+            return None, "Failed to delete project feedback. Project feedback not found.", 404
 
         db.session.delete(feedback)
         db.session.commit()
 
-        return feedback
+        return feedback, "OK", 200
 
 projectController = ProjectController()

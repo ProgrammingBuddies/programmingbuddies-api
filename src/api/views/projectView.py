@@ -335,20 +335,16 @@ def create_project_feedback():
 
     return wrap_response(*projectController.create_feedback(user_id=get_jwt_identity(), **request.get_json()))
 
-@app.route("/projects/<project_id>/feedbacks/<feedback_id>", methods=['DELETE'])
-def delete_project_feedback(project_id, feedback_id):
+@app.route("/project/feedback/<feedback_id>", methods=['DELETE'])
+@jwt_required
+def delete_project_feedback(feedback_id):
     """
     Delete project feedback
-    Deletes project feedback with `project_id` and `feedback_id`
+    Deletes project feedback with `feedback_id`
     ---
     tags:
         - ProjectFeedback
     parameters:
-        -   in: path
-            name: project_id
-            type: integer
-            required: true
-            description: Id of the project
         -   in: path
             name: feedback_id
             type: integer
@@ -357,12 +353,9 @@ def delete_project_feedback(project_id, feedback_id):
     responses:
         200:
             description: Project feedback deleted successfully
+        400:
+            description: Failed to delete project feedback
         404:
             description: Project feedback not found
     """
-    feedback = projectController.delete_feedback(project_id, feedback_id)
-
-    if feedback == None:
-        return "", 404
-    else:
-        return "", 200
+    return wrap_response(*projectController.delete_feedback(user_id=get_jwt_identity(), feedback_id=feedback_id))
