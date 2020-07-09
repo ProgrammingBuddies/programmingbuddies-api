@@ -67,11 +67,11 @@ class TestProjectView(object):
         assert response.status_code == 200
 
     def test_get_project(self, client):
-        response = client.get('/projects/{}'.format(0))
+        response = client.get('/project/{}'.format(0))
         assert response.status_code == 404
 
         project = create_project_for_test_cases(self.valid_project_data)
-        response = client.get('/projects/{}'.format(project["id"]))
+        response = client.get('/project/{}'.format(project["id"]))
         assert response.status_code == 200
         assert response.get_json()["data"]["name"] == project["name"]
 
@@ -80,7 +80,7 @@ class TestProjectView(object):
 
         self.valid_project_data["name"] = "allproject2"
         project2 = create_project_for_test_cases(self.valid_project_data)
-        response = client.get('/projects')
+        response = client.get('/project/all')
 
         assert response.status_code == 200
         r = response.get_json()
