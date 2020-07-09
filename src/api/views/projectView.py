@@ -312,9 +312,9 @@ def create_project_feedback():
                 id:
                     type: integer
                     description: Id of the project feedback. This property will be assigned a value returned by the database
-                user_id:
+                author_id:
                     type: integer
-                    description: Id of the user
+                    description: Id of the author (user)
                 project_id:
                     type: integer
                     description: Id of the project
@@ -330,10 +330,10 @@ def create_project_feedback():
         400:
             description: Failed to create project feedback
     """
-    if "user_id" in request.get_json():
-        return wrap_response(None, "Failed to create project feedback. Request body must not contain 'user_id'.", 400)
+    if "author_id" in request.get_json():
+        return wrap_response(None, "Failed to create project feedback. Request body must not contain 'author_id'.", 400)
 
-    return wrap_response(*projectController.create_feedback(user_id=get_jwt_identity(), **request.get_json()))
+    return wrap_response(*projectController.create_feedback(author_id=get_jwt_identity(), **request.get_json()))
 
 @app.route("/project/feedback/<feedback_id>", methods=['DELETE'])
 @jwt_required
@@ -358,4 +358,4 @@ def delete_project_feedback(feedback_id):
         404:
             description: Project feedback not found
     """
-    return wrap_response(*projectController.delete_feedback(user_id=get_jwt_identity(), feedback_id=feedback_id))
+    return wrap_response(*projectController.delete_feedback(author_id=get_jwt_identity(), feedback_id=feedback_id))

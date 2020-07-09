@@ -162,7 +162,7 @@ class ProjectController:
             return None, "Forbidden attributes used in request. Only 'project_id' and 'link' object containing 'id' allowed.", 400
 
     # Project Feedback
-    def create_feedback(self, user_id, **kwargs):
+    def create_feedback(self, author_id, **kwargs):
         if 'project_id' not in kwargs:
             return None, "Failed to create feedback. Request body must specify feedback's project_id.", 400
 
@@ -171,7 +171,7 @@ class ProjectController:
                 if kwargs["project_id"] is None or kwargs["rating"] is None or kwargs["description"] is None:
                     return None, "Arguments can't be empty", 400
 
-                feedback = ProjectFeedback(user_id=user_id, **kwargs)
+                feedback = ProjectFeedback(author_id=author_id, **kwargs)
                 self.session.add(feedback)
                 self.session.commit()
 
@@ -182,14 +182,14 @@ class ProjectController:
             self.session.rollback()
             return None, "Failed to create project feedback.", 400
 
-    def delete_feedback(self, user_id, feedback_id):
+    def delete_feedback(self, author_id, feedback_id):
         feedback = ProjectFeedback.query.filter_by(id=feedback_id).first()
-
-        if feedback.user_id != user_id:
-            return None, "Failed to delete project feedback. Cannot delete project feedback that you did not create.", 400
 
         if feedback == None:
             return None, "Failed to delete project feedback. Project feedback not found.", 404
+
+        if feedback.author_id != author_id:
+            return None, "Failed to delete project feedback. Cannot delete project feedback that you did not create.", 400
 
         db.session.delete(feedback)
         db.session.commit()
