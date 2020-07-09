@@ -53,7 +53,7 @@ class TestProjectView(object):
     def test_delete_project(self, client):
         token, user = create_access_token_for_test_cases(self.valid_user_data)
 
-        response = client.delete('/project', headers={"Authorization": f"Bearer {token}"}, json={"id": 0})
+        response = client.delete('/project/{}'.format(0), headers={"Authorization": f"Bearer {token}"})
         assert response.status_code == 404
 
         project1 = create_project_for_test_cases(self.valid_project_data)
@@ -63,15 +63,15 @@ class TestProjectView(object):
         project2 = create_project_for_test_cases(self.valid_project_data)
         user_join_project_for_test_cases(user, project2)
 
-        response = client.delete('/project', headers={"Authorization": f"Bearer {token}"}, json={"id": project1["id"]})
+        response = client.delete('/project/{}'.format(project1["id"]), headers={"Authorization": f"Bearer {token}"})
         assert response.status_code == 200
 
     def test_get_project(self, client):
-        response = client.get('/projects/{}'.format(0))
+        response = client.get('/project/{}'.format(0))
         assert response.status_code == 404
 
         project = create_project_for_test_cases(self.valid_project_data)
-        response = client.get('/projects/{}'.format(project["id"]))
+        response = client.get('/project/{}'.format(project["id"]))
         assert response.status_code == 200
         assert response.get_json()["data"]["name"] == project["name"]
 
@@ -80,7 +80,7 @@ class TestProjectView(object):
 
         self.valid_project_data["name"] = "allproject2"
         project2 = create_project_for_test_cases(self.valid_project_data)
-        response = client.get('/projects')
+        response = client.get('/project/all')
 
         assert response.status_code == 200
         r = response.get_json()
@@ -120,9 +120,11 @@ class TestProjectView(object):
         assert response.get_json()["name"] == "Nlink"
 
     def test_delete_project_link(self, client):
-        url = '/projects/{0}/links/{1}'
+        token, _ = create_access_token_for_test_cases(self.valid_user_data)
 
-        response = client.delete(url.format(0, 0))
+        url = '/project/link'
+
+        response = client.delete(url, headers={"Authorization": f"Bearer {token}"}, json={"project_id": 0, "id": 0})
         assert response.status_code == 404
 
         p1 = create_project_for_test_cases(self.valid_project_data)
@@ -140,7 +142,7 @@ class TestProjectView(object):
         })
 
 
-        response = client.delete(url.format(p1["id"], p_link1["id"]))
+        response = client.delete(url, headers={"Authorization": f"Bearer {token}"}, json={"project_id": p1["id"], "id": p_link1["id"]})
         assert response.status_code == 200
         items = ProjectLink.query.all()
         assert len(items) == 1
