@@ -53,7 +53,7 @@ class TestProjectView(object):
     def test_delete_project(self, client):
         token, user = create_access_token_for_test_cases(self.valid_user_data)
 
-        response = client.delete('/project', headers={"Authorization": f"Bearer {token}"}, json={"id": 0})
+        response = client.delete('/project/{}'.format(0), headers={"Authorization": f"Bearer {token}"})
         assert response.status_code == 404
 
         project1 = create_project_for_test_cases(self.valid_project_data)
@@ -63,7 +63,7 @@ class TestProjectView(object):
         project2 = create_project_for_test_cases(self.valid_project_data)
         user_join_project_for_test_cases(user, project2)
 
-        response = client.delete('/project', headers={"Authorization": f"Bearer {token}"}, json={"id": project1["id"]})
+        response = client.delete('/project/{}'.format(project1["id"]), headers={"Authorization": f"Bearer {token}"})
         assert response.status_code == 200
 
     def test_get_project(self, client):
