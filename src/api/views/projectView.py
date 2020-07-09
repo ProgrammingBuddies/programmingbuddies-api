@@ -105,7 +105,7 @@ def update_project():
 
     return wrap_response(*projectController.update_project(user_id=get_jwt_identity(), **request.get_json()))
 
-@app.route("/projects/<id>", methods=['GET'])
+@app.route("/project/<id>", methods=['GET'])
 def get_project(id):
     """
     Get project
@@ -127,7 +127,7 @@ def get_project(id):
     """
     return wrap_response(*projectController.get_project(id=id))
 
-@app.route("/projects", methods=['GET'])
+@app.route("/project/all", methods=['GET'])
 def get_all_projects():
     """
     Get all projects
