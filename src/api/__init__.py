@@ -8,9 +8,8 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 cors = CORS(app, origins="*", supports_credentials=True)
-# Disable sorting of the jsonified data
-app.config['JSON_SORT_KEYS'] = False
 
+import api.config
 from api.models import db
 import api.models
 import api.endpoints
