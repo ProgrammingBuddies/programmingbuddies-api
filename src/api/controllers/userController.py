@@ -10,9 +10,12 @@ class UserController:
     # User
     def create_user(self, **kwargs):
         try:
-            user = User(**kwargs)
-            self.session.add(user)
-            self.session.commit()
+            if not kwargs.get("name", False):
+                return None, "Missing required argument", 400
+            else:
+                user = User(**kwargs)
+                self.session.add(user)
+                self.session.commit()
 
             return user, "OK", 200
         except:
