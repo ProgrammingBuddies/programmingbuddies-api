@@ -31,3 +31,10 @@ class UserUpdateValidation(Inputs):
         'location': [Length(max=80, message="name too big")],
         'occupation': [Length(max=80, message="name too big")]
     }
+
+class UserGetValidation(Inputs):
+    json = {
+        'name': [Length(max=80, message="name too big")],
+        'location': [Length(max=80, message="name too big")],
+        'occupation': [Length(max=80, message="name too big")]
+    }

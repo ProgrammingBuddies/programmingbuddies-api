@@ -1,6 +1,6 @@
-from api.controllers.validationController import validateForCreate, validateForUpdate
+from api.controllers.validationController import validateForCreate, validateForUpdate, validateForGet
 from api.models import db, User, UserHasProject, UserLink, UserFeedback
-from api.validation.UserValidation import UserLinkCreateValidation, UserLinkUpdateValidation, UserFeedbackCreateValidation, UserUpdateValidation
+from api.validation.UserValidation import UserLinkCreateValidation, UserLinkUpdateValidation, UserFeedbackCreateValidation, UserUpdateValidation, UserGetValidation
 from flask_jwt_extended import get_jwt_identity
 
 
@@ -45,11 +45,21 @@ class UserController:
             self.session.rollback()
             return None, "user update failed", 500
 
-    def get_user(self, **kwargs):
-        user = User.query.filter_by(**kwargs).first()
+    def get_user(self, req):
+        allowed_queries = ["id", "name", "languages"]
 
-        if user is None:
-            return None, "User Not Found", 404
+        try:
+            v = validateForGet(req, UserGetValidation, allowed_queries)
+
+            if v == True:
+                user = User.query.filter_by(**req.get_json()).first()
+
+                if user is None:
+                    return None, "User Not Found", 404
+            else:
+                return v
+        except:
+            return None, "Error during query", 500
 
         return user, "OK", 200
 
