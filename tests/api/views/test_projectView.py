@@ -1,6 +1,6 @@
 from tests.conftest import client
-from tests import db, Project, ProjectLink
-from tests.api import create_project_for_test_cases, create_project_link_for_test_cases, create_access_token_for_test_cases, user_join_project_for_test_cases
+from tests import db, Project, ProjectLink, ProjectFeedback
+from tests.api import create_project_for_test_cases, create_project_link_for_test_cases, create_project_feedback_for_test_cases, create_access_token_for_test_cases, user_join_project_for_test_cases
 
 class TestProjectView(object):
 
@@ -21,6 +21,7 @@ class TestProjectView(object):
         'repository': 'http://github.xy.com'
     }
 
+    # Project
     def test_create_project(self, client):
         token, _ = create_access_token_for_test_cases(self.valid_user_data)
 
@@ -86,6 +87,7 @@ class TestProjectView(object):
         r = response.get_json()
         assert [r["data"][0]["name"], r["data"][1]["name"]] == [project1["name"], project2["name"]]
 
+    # Project Link
     def test_create_project_link(self, client):
         token, _ = create_access_token_for_test_cases(self.valid_user_data)
 
@@ -149,3 +151,47 @@ class TestProjectView(object):
         items = ProjectLink.query.all()
         assert len(items) == 1
         assert items[0].name == "Other"
+
+    # Projet Feedback
+    def test_create_project_feedback(self, client):
+        token, user = create_access_token_for_test_cases(self.valid_user_data)
+
+        project = create_project_for_test_cases(self.valid_project_data)
+        url = '/project/feedback'
+
+        response = client.post(url, headers={"Authorization": f"Bearer {token}"}, json={"user_id": 0})
+        assert response.status_code == 400
+
+        response = client.post(url, headers={"Authorization": f"Bearer {token}"}, json={"project_id": project["id"], "rating": 3, "description": "A feedback"})
+        assert response.status_code == 201
+
+    def test_delete_project_feedback(self, client):
+        token, user = create_access_token_for_test_cases(self.valid_user_data)
+
+        url = '/project/feedback/{}'
+
+        response = client.delete(url.format(0), headers={"Authorization": f"Bearer {token}"})
+        assert response.status_code == 404
+
+        p1 = create_project_for_test_cases(self.valid_project_data)
+        p_feedback1 = create_project_feedback_for_test_cases(
+            {
+            "rating": 1,
+            "description": "A feedback",
+            "project_id": p1["id"],
+            "author_id": user.id
+        })
+        p_feedback2 = create_project_feedback_for_test_cases(
+            {
+            "rating": 5,
+            "description": "Other",
+            "project_id": p1["id"],
+            "author_id": user.id
+        })
+
+
+        response = client.delete(url.format(p_feedback1["id"]), headers={"Authorization": f"Bearer {token}"})
+        assert response.status_code == 200
+        items = ProjectFeedback.query.all()
+        assert len(items) == 1
+        assert items[0].description == "Other"

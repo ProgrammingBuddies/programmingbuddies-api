@@ -11,7 +11,7 @@
 
 """
 from flask_jwt_extended import create_access_token
-from tests import db, Project, User, UserHasProject, UserLink, ProjectLink, UserFeedback
+from tests import db, Project, User, UserHasProject, UserLink, ProjectLink, UserFeedback, ProjectFeedback
 
 """ Create relationship between user and project """
 def user_join_project_for_test_cases(user, project):
@@ -40,6 +40,13 @@ def create_project_link_for_test_cases(data):
     db.session.commit()
 
     return new_project_link.as_dict()
+
+def create_project_feedback_for_test_cases(data):
+    new_project_feedback = ProjectFeedback(**data)
+    db.session.add(new_project_feedback)
+    db.session.commit()
+
+    return new_project_feedback.as_dict()
 
 def create_access_token_for_test_cases(data):
     new_user = User(**data)
