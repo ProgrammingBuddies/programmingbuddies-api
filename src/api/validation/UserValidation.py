@@ -22,3 +22,12 @@ class UserFeedbackCreateValidation(Inputs):
         'rating': [InputRequired("rating required")],
         'description': [Length(max=255, message="description too big")]
     }
+
+
+class UserUpdateValidation(Inputs):
+    json = {
+        'id': [InputRequired("id required")],
+        'name': [Length(max=80, message="name too big")],
+        'location': [Length(max=80, message="name too big")],
+        'occupation': [Length(max=80, message="name too big")]
+    }

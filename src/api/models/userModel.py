@@ -4,8 +4,8 @@ from api.models.column import Column
 
 
 class User(db.Model):
-    id = Column(db.Integer, primary_key=True, readonly=True)
-    github_id = Column(db.Integer, readonly=True)
+    id = Column(db.Integer, primary_key=True, const=True)
+    github_id = Column(db.Integer, const=True)
     name = Column(db.String(80), nullable=False)
     bio = Column(db.Text)
     languages = Column(db.Text)

@@ -1,6 +1,6 @@
 from api.controllers.validationController import validateForCreate, validateForUpdate
 from api.models import db, User, UserHasProject, UserLink, UserFeedback
-from api.validation.UserValidation import UserLinkCreateValidation, UserLinkUpdateValidation, UserFeedbackCreateValidation
+from api.validation.UserValidation import UserLinkCreateValidation, UserLinkUpdateValidation, UserFeedbackCreateValidation, UserUpdateValidation
 from flask_jwt_extended import get_jwt_identity
 
 
@@ -22,26 +22,28 @@ class UserController:
             self.session.rollback()
             return None, "Forbidden Attributes", 400
 
-    def update_user(self, id, **kwargs):
-        user = User.query.filter_by(id=id).first()
+    def update_user(self, user_id, req):
+        try:
+            v = validateForUpdate(req, UserUpdateValidation, User)
+            if v == True:
+                user = User.query.filter_by(id=user_id).first()
+                if user is None:
+                    return None, "user not found", 404
 
-        if user == None:
-            return None, "user not found", 404
+                json = req.get_json()
+                for key, value in json.items():
+                    setattr(user, key, value)
 
-        for key, value in kwargs.items():
-            if not hasattr(user, key):
-                return None, "forbidden attribute", 400
+                db.session.commit()
+
+                return user, "OK", 200
             else:
-                col = getattr(User, key)
-                if col.prop.expression.readonly:
-                    return None, "forbidden attribute", 400
-
-        for key, value in kwargs.items():
-            setattr(user, key, value)
-
-        db.session.commit()
-
-        return user, "OK", 200
+                return v
+        except Exception as e:
+            print(type(e))
+            print(e)
+            self.session.rollback()
+            return None, "user update failed", 500
 
     def get_user(self, **kwargs):
         user = User.query.filter_by(**kwargs).first()

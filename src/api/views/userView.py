@@ -51,10 +51,7 @@ def update_user():
             description: User the token belonged to doesn't exist anymore
     """
 
-    if 'id' in request.get_json():
-        return wrap_response(None, "Failed to update user. Request body can not specify user's id.", 400)
-
-    return wrap_response(*userController.update_user(get_jwt_identity(), **request.get_json()))
+    return wrap_response(*userController.update_user(get_jwt_identity(), request))
 
 @app.route("/user", methods=['GET'])
 @jwt_required
