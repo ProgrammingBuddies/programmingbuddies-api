@@ -125,7 +125,7 @@ class UserController:
         if user is None:
             return None, "User not found", 404
 
-        return user.links, "OK", 200
+        return [link for link in user.links], "OK", 200
 
     def delete_link(self, user_id, req):
         try:
