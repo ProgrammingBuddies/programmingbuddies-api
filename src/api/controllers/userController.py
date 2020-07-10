@@ -173,24 +173,19 @@ class UserController:
             self.session.rollback()
             return None, "feedback creation failed", 500
 
-    def get_all_feedbacks(self, **kwargs):
-        if not 'id' in kwargs:
-            return None, "id Required", 400
-        user = User.query.filter_by(id=kwargs['id']).first()
+    def get_all_feedbacks(self, user_id):
+        user = User.query.filter_by(id=user_id).first()
         if user is None:
             return None, "User not found", 404
 
-        return user.received_feedbacks, "OK", 200
+        return [feedback for feedback in user.received_feedbacks], "OK", 200
 
-    def delete_feedback(self, user_id, **kwargs):
+    def delete_feedback(self, user_id, req):
         user = User.query.filter_by(id=user_id).first()
         if user == None:
             return None, "User not found", 404
 
-        if not 'id' in kwargs:
-            return None, "id Required", 400
-        feedback = UserFeedback.query.filter_by(author_id=user_id, id=kwargs['id']).first()
-
+        feedback = UserFeedback.query.filter_by(author_id=user_id, id=req.args.get("id")).first()
         if feedback == None:
             return None, "feedback not found", 404
 
