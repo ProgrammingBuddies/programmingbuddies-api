@@ -53,6 +53,13 @@ class UserController:
 
         return user, "OK", 200
 
+    def get_current_user(self, user_id):
+        user = User.query.filter_by(id=user_id).first()
+        if user is None:
+            return None, "user not found", 404
+
+        return user, "OK", 200
+
     def get_all_users(self, **kwargs):
         all_users = User.query.all()
 

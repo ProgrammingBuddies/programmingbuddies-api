@@ -68,7 +68,7 @@ def get_user():
         404:
             description: User the token belonged to doesn't exist anymore
     """
-    return wrap_response(*userController.get_user_from_jwt())
+    return wrap_response(*userController.get_current_user(get_jwt_identity()))
 
 @app.route("/user", methods=['DELETE'])
 @jwt_required
