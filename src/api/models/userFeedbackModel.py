@@ -1,11 +1,13 @@
 from api.models import db
+from api.models.column import Column
+
 
 class UserFeedback(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    rating = db.Column(db.Integer, nullable=False)
-    description = db.Column(db.String(255), nullable=True)
+    id = Column(db.Integer, primary_key=True, const=True)
+    author_id = Column(db.Integer, db.ForeignKey('user.id'), const=True)
+    user_id = Column(db.Integer, db.ForeignKey('user.id'), readonly=True)
+    rating = Column(db.Integer, nullable=False)
+    description = Column(db.String(255), nullable=True)
 
     def as_dict(self):
         obj_d = {

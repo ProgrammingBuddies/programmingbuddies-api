@@ -1,6 +1,6 @@
-from api.controllers.validationController import validate, validateForUpdate
+from api.controllers.validationController import validateForCreate, validateForUpdate
 from api.models import db, User, UserHasProject, UserLink, UserFeedback
-from api.validation.UserValidation import UserLinkCreateValidation, UserLinkUpdateValidation
+from api.validation.UserValidation import UserLinkCreateValidation, UserLinkUpdateValidation, UserFeedbackCreateValidation
 from flask_jwt_extended import get_jwt_identity
 
 
@@ -78,9 +78,14 @@ class UserController:
     # User Link
     def create_link(self, user_id, req):
         try:
-            v = validate(req, UserLinkCreateValidation, UserLink)
+            v = validateForCreate(req, UserLinkCreateValidation, UserLink)
             if v == True:
-                link = UserLink(user_id=user_id, **req.get_json())
+                json = req.get_json()
+                user = User.query.filter_by(id=user_id).first()
+                if user is None:
+                    return None, "User not found", 404
+
+                link = UserLink(user_id=user_id, **json)
                 self.session.add(link)
                 self.session.commit()
 
@@ -129,7 +134,7 @@ class UserController:
         try:
             link = UserLink.query.filter_by(user_id=user_id, id=req.args.get('id')).first()
 
-            if link == None:
+            if link is None:
                 return None, "Link not found", 404
 
             db.session.delete(link)
@@ -141,44 +146,49 @@ class UserController:
             print(type(e))
             print(e)
             self.session.rollback()
-            return None, "link creation failed", 500
+            return None, "link deletion failed", 500
 
     # User Feedback
-    def create_feedback(self, user_id, **kwargs):
-        author = User.query.filter_by(id=user_id).first()
-        if author is None:
-            return None, "Author not found", 404
+    def create_feedback(self, user_id, req):
+        try:
+            v = validateForCreate(req, UserFeedbackCreateValidation, UserFeedback)
+            if v == True:
+                author = User.query.filter_by(id=user_id).first()
+                if author is None:
+                    return None, "Author not found", 404
 
-        if not 'id' in kwargs or not 'rating' in kwargs:
-            return None, "Missing required argument", 400
+                json = req.get_json()
+                user = User.query.filter_by(id=json['user_id']).first()
+                if user is None:
+                    return None, "User not found", 404
 
-        user = User.query.filter_by(id=kwargs['id']).first()
+                feedback = UserFeedback(author_id=author.id, **json)
+                self.session.add(feedback)
+                self.session.commit()
+
+                return feedback, "OK", 201
+            else:
+                return v
+
+        except Exception as e:
+            print(type(e))
+            print(e)
+            self.session.rollback()
+            return None, "feedback creation failed", 500
+
+    def get_all_feedbacks(self, user_id):
+        user = User.query.filter_by(id=user_id).first()
         if user is None:
             return None, "User not found", 404
-        feedback = UserFeedback(author_id=author.id, user_id=kwargs.pop('id'), **kwargs)
-        self.session.add(feedback)
-        self.session.commit()
 
-        return feedback, "OK", 201
+        return [feedback for feedback in user.received_feedbacks], "OK", 200
 
-    def get_all_feedbacks(self, **kwargs):
-        if not 'id' in kwargs:
-            return None, "id Required", 400
-        user = User.query.filter_by(id=kwargs['id']).first()
-        if user is None:
-            return None, "User not found", 404
-
-        return user.received_feedbacks, "OK", 200
-
-    def delete_feedback(self, user_id, **kwargs):
+    def delete_feedback(self, user_id, req):
         user = User.query.filter_by(id=user_id).first()
         if user == None:
             return None, "User not found", 404
 
-        if not 'id' in kwargs:
-            return None, "id Required", 400
-        feedback = UserFeedback.query.filter_by(author_id=user_id, id=kwargs['id']).first()
-
+        feedback = UserFeedback.query.filter_by(author_id=user_id, id=req.args.get("id")).first()
         if feedback == None:
             return None, "feedback not found", 404
 

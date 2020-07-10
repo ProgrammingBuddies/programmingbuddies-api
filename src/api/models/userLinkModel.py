@@ -3,10 +3,10 @@ from api.models.column import Column
 
 
 class UserLink(db.Model):
-    id = Column(db.Integer, primary_key=True, readonly=True)
+    id = Column(db.Integer, primary_key=True, const=True)
     name = Column(db.String(80), nullable=False)
     url = Column(db.Text, nullable=False)
-    user_id = Column(db.Integer, db.ForeignKey('user.id'), nullable=False, readonly=True)
+    user_id = Column(db.Integer, db.ForeignKey('user.id'), nullable=False, const=True)
 
     def as_dict(self):
         obj_d = {

@@ -241,10 +241,11 @@ def create_user_feedback():
             description: Failed to create user feedback
     """
 
-    return wrap_response(*userController.create_feedback(get_jwt_identity(), **request.get_json()))
+    return wrap_response(*userController.create_feedback(get_jwt_identity(), request))
+
 
 @app.route("/user/feedbacks", methods=['GET'])
-@body_required
+@jwt_required
 def get_all_user_feedbacks():
     """
     Get all user feedbacks
@@ -266,15 +267,11 @@ def get_all_user_feedbacks():
         200:
             description: List of user feedbacks
     """
-    all_feedbacks, msg, code = userController.get_all_feedbacks(**request.get_json())
+    return wrap_response(*userController.get_all_feedbacks(get_jwt_identity()))
 
-    feedbacks = [ feedback for feedback in all_feedbacks ]
-
-    return wrap_response(feedbacks, msg, code)
 
 @app.route("/user/feedback", methods=['DELETE'])
 @jwt_required
-@body_required
 def delete_user_feedback():
     """
     Delete user feedback
@@ -298,4 +295,4 @@ def delete_user_feedback():
         404:
             description: User feedback not found
     """
-    return wrap_response(*userController.delete_feedback(get_jwt_identity(), **request.get_json()))
+    return wrap_response(*userController.delete_feedback(get_jwt_identity(), request))
