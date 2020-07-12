@@ -25,8 +25,10 @@ Requirements:
     2. Run `pipenv install` inside the repository
         - If you have multiple Python versions installed you might need to specify which one to use `pipenv install --python=python3.7`
 - SSL
-    1. On Mac or Linux install the openssl tool and run `openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365` inside the repository
-    2. On Windows ... explanation will follow.
+    - On Mac or Linux install the openssl tool and run `openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365` inside the repository
+    - On windows
+        1. Install OpenSSL for Windows [here](https://slproweb.com/products/Win32OpenSSL.html)
+        2. Execute the same command as on Mac inside the project directory.
 
 Run the server:
 - `pipenv run python src/runserver.py`
