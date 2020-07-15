@@ -46,11 +46,8 @@ class UserController:
             return None, "user update failed", 500
 
     def get_user(self, req):
-        allowed_queries = ["id", "name", "languages"]
-
         try:
-            v = validateForGet(req, UserGetValidation, allowed_queries)
-
+            v = validateForGet(req, UserGetValidation)
             if v == True:
                 user = User.query.filter_by(**req.get_json()).first()
 

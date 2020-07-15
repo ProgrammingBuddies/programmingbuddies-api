@@ -34,6 +34,7 @@ class UserUpdateValidation(Inputs):
 
 class UserGetValidation(Inputs):
     json = {
+        'id': [],
         'name': [Length(max=80, message="name too big")],
         'location': [Length(max=80, message="name too big")],
         'occupation': [Length(max=80, message="name too big")]
