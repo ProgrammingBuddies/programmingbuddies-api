@@ -54,7 +54,7 @@ def update_user():
     return wrap_response(*userController.update_user(get_jwt_identity(), request))
 
 @app.route("/user", methods=['GET'])
-# @jwt_required
+@jwt_required
 def get_user():
     """
     Get user
@@ -68,8 +68,8 @@ def get_user():
         404:
             description: User the token belonged to doesn't exist anymore
     """
-    return wrap_response(*userController.get_user(request))
-    # return wrap_response(*userController.get_current_user(get_jwt_identity()))
+
+    return wrap_response(*userController.get_current_user(get_jwt_identity()))
 
 @app.route("/user", methods=['DELETE'])
 @jwt_required
